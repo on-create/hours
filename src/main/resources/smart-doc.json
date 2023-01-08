@@ -1,0 +1,12 @@
+{
+  "serverUrl": "http://127.0.0.1",
+  "isStrict": false,
+  "allInOne": true,
+  "outPath": "src/main/resources/apiMd",
+  "coverOld": true,
+  "createDebugPage": true,
+  "md5EncryptedHtmlName": false,
+  "style": "xt256",
+  "framework": "spring",
+  "allInOneDocFileName": "hours.md"
+}
