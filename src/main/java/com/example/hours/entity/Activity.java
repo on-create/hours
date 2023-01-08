@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@TableName("user")
-public class User implements Serializable {
+@TableName("activity")
+public class Activity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,54 +25,64 @@ public class User implements Serializable {
     private Integer id;
 
     /**
-     * 用户名
+     * 活动申请人id
      */
-    private String username;
+    private Integer applicantId;
 
     /**
-     * 密码
+     * 活动审批人id
      */
-    private String password;
+    private Integer approverId;
 
     /**
-     * 昵称
+     * 活动主题
      */
-    private String nickname;
+    private String theme;
 
     /**
-     * 手机号
+     * 活动简介
      */
-    private String mobile;
+    private String content;
 
     /**
-     * 个性签名
+     * 活动图片地址
      */
-    private String sign;
+    private String picture;
 
     /**
-     * 邮箱
+     * 报名人数限制
      */
-    private String email;
+    private Integer limit;
 
     /**
-     * 头像
+     * 活动学时奖励
      */
-    private String header;
+    private Float reward;
 
     /**
-     * 性别
-     */
-    private Integer gender;
-
-    /**
-     * 活动申请权限
-     */
-    private Integer authority;
-
-    /**
-     * 启用状态
+     * 活动状态
      */
     private Integer status;
+
+    /**
+     * 报名开始时间
+     */
+    private LocalDateTime applyStartTime;
+
+    /**
+     * 报名结束时间
+     */
+    private LocalDateTime applyEndTime;
+
+    /**
+     * 活动开始时间
+     */
+    private LocalDateTime activityStartTime;
+
+    /**
+     * 活动结束时间
+     */
+    private LocalDateTime activityEndTime;
 
     /**
      * 创建时间

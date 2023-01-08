@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@TableName("user")
-public class User implements Serializable {
+@TableName("welfare_hours")
+public class WelfareHours implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,54 +25,19 @@ public class User implements Serializable {
     private Integer id;
 
     /**
-     * 用户名
+     * user id
      */
-    private String username;
+    private Integer userId;
 
     /**
-     * 密码
+     * 学时
      */
-    private String password;
+    private Integer hours;
 
     /**
-     * 昵称
+     * 学年
      */
-    private String nickname;
-
-    /**
-     * 手机号
-     */
-    private String mobile;
-
-    /**
-     * 个性签名
-     */
-    private String sign;
-
-    /**
-     * 邮箱
-     */
-    private String email;
-
-    /**
-     * 头像
-     */
-    private String header;
-
-    /**
-     * 性别
-     */
-    private Integer gender;
-
-    /**
-     * 活动申请权限
-     */
-    private Integer authority;
-
-    /**
-     * 启用状态
-     */
-    private Integer status;
+    private String year;
 
     /**
      * 创建时间
