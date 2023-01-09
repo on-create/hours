@@ -42,7 +42,7 @@ public class Activity implements Serializable {
     /**
      * 活动简介
      */
-    private String content;
+    private String introduction;
 
     /**
      * 活动图片地址

@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@TableName("welfare_hours")
-public class WelfareHours implements Serializable {
+@TableName("welfare_hour")
+public class WelfareHour implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
