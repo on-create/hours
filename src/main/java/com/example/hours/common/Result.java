@@ -33,6 +33,9 @@ public class Result<T> {
         this.data = data;
     }
 
+    public static <T> Result<T> success() {
+        return new Result<>(ResultCodeEnum.SUCCESS.getCode(), ResultCodeEnum.SUCCESS.getMessage(), null);
+    }
     /**
      * 请求成功，返回结果
      * @param data 获取的数据

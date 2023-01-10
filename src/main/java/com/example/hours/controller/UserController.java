@@ -1,12 +1,11 @@
 package com.example.hours.controller;
 
+import com.example.hours.common.Result;
 import com.example.hours.entity.User;
 import com.example.hours.service.UserService;
+import com.example.hours.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户控制类
@@ -26,5 +25,17 @@ public class UserController {
     @GetMapping("/test")
     public User test(@RequestParam Integer id) {
         return userService.getById(id);
+    }
+
+    @GetMapping("/user_info")
+    public Result<UserVo> getUserVo(@RequestParam("id") Integer id) {
+        UserVo userVo = userService.getUserVo(id);
+        return Result.success(userVo);
+    }
+
+    @PostMapping("/update")
+    public Result<Object> updateUser(@RequestBody User user) {
+        userService.updateUserInfo(user);
+        return Result.success();
     }
 }
