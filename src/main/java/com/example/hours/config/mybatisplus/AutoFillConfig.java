@@ -1,7 +1,7 @@
 package com.example.hours.config.mybatisplus;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.example.hours.enums.ZoneEnum;
+import com.example.hours.common.enums.ZoneEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Configuration;

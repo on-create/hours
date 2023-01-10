@@ -9,4 +9,8 @@ public interface UserService extends IService<User> {
     UserVo getUserVo(Integer id);
 
     void updateUserInfo(User user);
+
+    void addUser(User user);
+
+    void sendCode(String email);
 }

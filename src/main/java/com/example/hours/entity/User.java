@@ -1,14 +1,14 @@
 package com.example.hours.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import com.example.hours.common.validator.group.AddGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -25,19 +25,16 @@ public class User implements Serializable {
     private Integer id;
 
     /**
-     * 用户名
+     * 昵称
      */
-    private String username;
+    @NotBlank(message = "昵称不能为空", groups = {AddGroup.class})
+    private String nickname;
 
     /**
      * 密码
      */
+    @NotBlank(message = "密码不能为空", groups = {AddGroup.class})
     private String password;
-
-    /**
-     * 昵称
-     */
-    private String nickname;
 
     /**
      * 手机号
@@ -52,6 +49,8 @@ public class User implements Serializable {
     /**
      * 邮箱
      */
+    @NotBlank(message = "邮箱不能为空", groups = {AddGroup.class})
+    @Email(message = "邮箱格式错误", groups = {AddGroup.class})
     private String email;
 
     /**
@@ -72,6 +71,7 @@ public class User implements Serializable {
     /**
      * 启用状态
      */
+    @TableLogic(value = "1", delval = "0")
     private Integer status;
 
     /**

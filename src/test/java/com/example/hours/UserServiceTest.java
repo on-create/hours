@@ -15,7 +15,6 @@ public class UserServiceTest {
     @Test
     public void insert() {
         User user = User.builder()
-                .username("赵六")
                 .password("123456")
                 .nickname("昵称")
                 .mobile("17779192381")

@@ -1,4 +1,4 @@
-package com.example.hours.enums;
+package com.example.hours.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

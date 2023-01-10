@@ -1,7 +1,9 @@
 package com.example.hours.common;
 
-import com.example.hours.enums.ResultCodeEnum;
+import com.example.hours.common.enums.ResultCodeEnum;
 import lombok.Data;
+
+import java.util.Map;
 
 /**
  * 通用返回结果封装类
@@ -91,5 +93,14 @@ public class Result<T> {
      */
     public static <T> Result<T> failed() {
         return failed(ResultCodeEnum.FAILED);
+    }
+
+    /**
+     * 参数验证失败
+     * @param errorMap 参数验证失败信息集合
+     * @return 验证失败信息结果
+     */
+    public static Result<Map<String, String>> validateFailed(Map<String, String> errorMap) {
+        return new Result<>(ResultCodeEnum.VALIDATE_FAILED.getCode(), ResultCodeEnum.VALIDATE_FAILED.getMessage(), errorMap);
     }
 }
