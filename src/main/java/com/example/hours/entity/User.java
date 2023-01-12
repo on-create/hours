@@ -76,12 +76,15 @@ public class User implements Serializable {
 
     /**
      * 创建时间
+     * @ignore
      */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /**
      * 更新时间
+     * @ignore
+     * TODO 添加 json 忽略注解
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;

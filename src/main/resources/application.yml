@@ -9,6 +9,30 @@ spring:
     url: jdbc:mysql://localhost:3306/public_service_hours?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: root
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: hours
+    password: hours
+    virtual-host: hours
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 1
+  mail:
+    host: smtp.qq.com
+    username: 你的用来发送邮件的邮箱地址
+    password: 你的授权码
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml

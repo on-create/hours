@@ -39,18 +39,33 @@ public class UserController {
         return Result.success(userVo);
     }
 
+    /**
+     * 更新当前用户信息
+     * @param user 当前用户更新的信息
+     * @return {@link Result<>}
+     */
     @PostMapping("/update")
     public Result<Object> updateUser(@RequestBody User user) {
         userService.updateUserInfo(user);
         return Result.success();
     }
 
+    /**
+     * 用户注册
+     * @param user 注册用户信息
+     * @return {@link Result<>}
+     */
     @PostMapping("/register")
     public Result<Object> register(@Validated(AddGroup.class) @RequestBody User user) {
         userService.addUser(user);
         return Result.success();
     }
 
+    /**
+     * 发送邮箱验证码
+     * @param email 邮箱地址
+     * @return {@link Result<>}
+     */
     @GetMapping("/code")
     public Result<Object>sendCode(
             @NotBlank(message = "邮箱不能为空")

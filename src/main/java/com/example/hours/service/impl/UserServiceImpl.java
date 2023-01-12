@@ -1,18 +1,33 @@
 package com.example.hours.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.hours.common.constant.RabbitMQConstant;
+import com.example.hours.common.constant.RedisConstant;
 import com.example.hours.dao.UserDao;
 import com.example.hours.entity.User;
 import com.example.hours.service.UserService;
 import com.example.hours.utils.CodeUtils;
+import com.example.hours.utils.RedisKeyUtils;
+import com.example.hours.utils.RedisUtils;
 import com.example.hours.vo.EmailVo;
 import com.example.hours.vo.UserVo;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
 
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserService {
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     @Override
     public UserVo getUserVo(Integer id) {
@@ -54,7 +69,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
                 .subject("验证码")
                 .content("您的验证码为 " + code + " ，有效期15分钟，请不要告诉他人!")
                 .build();
-        // TODO 通过 rabbitmq 发送邮件
-        // TODO 将验证码存入 redis，并设置过期时间
+        rabbitTemplate.convertAndSend(RabbitMQConstant.TOPIC_EMAIL_EXCHANGE, RabbitMQConstant.EMAIL_REGISTER_ROUTING_KEY , emailVo);
+        redisUtils.set(RedisKeyUtils.codeKey(email), code, RedisConstant.CODE_EXPIRE_TIME);
     }
 }
