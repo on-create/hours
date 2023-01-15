@@ -1,6 +1,5 @@
 package com.example.hours.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.hours.common.constant.RabbitMQConstant;
@@ -17,8 +16,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.nio.charset.StandardCharsets;
 
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserService {

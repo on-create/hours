@@ -1,7 +1,9 @@
 package com.example.hours.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import com.example.hours.common.validator.group.AddGroup;
+import com.example.hours.common.validator.group.TemporaryGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -22,6 +25,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId
+    @Null(message = "不能指定id", groups = {AddGroup.class})
     private Integer id;
 
     /**
@@ -66,26 +70,29 @@ public class User implements Serializable {
     /**
      * 活动申请权限
      */
+    @Null(message = "不能指定申请权限", groups = {AddGroup.class})
     private Integer authority;
 
     /**
      * 启用状态
      */
     @TableLogic(value = "1", delval = "0")
+    @Null(message = "不能指定状态", groups = {AddGroup.class})
     private Integer status;
 
     /**
      * 创建时间
-     * @ignore
      */
+    @JSONField(serialize = false)
     @TableField(fill = FieldFill.INSERT)
+    @Null(message = "不能指定创建时间", groups = {AddGroup.class})
     private LocalDateTime createTime;
 
     /**
      * 更新时间
-     * @ignore
-     * TODO 添加 json 忽略注解
      */
+    @JSONField(serialize = false)
     @TableField(fill = FieldFill.INSERT_UPDATE)
+    @Null(message = "不能指定更新时间", groups = {AddGroup.class})
     private LocalDateTime updateTime;
 }
