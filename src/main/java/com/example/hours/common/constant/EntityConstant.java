@@ -33,4 +33,16 @@ public class EntityConstant {
      * 每个用户最大的草稿数
      */
     public static final int ACTIVITY_DRAFT_MAX = 5;
+
+    //- - - - - - - - - - - - - - - - - - - - -  RegisterActivity 常量 - - - - - - - - - - - - - - - - - - - -
+
+    /**
+     * 未参与活动
+     */
+    public static final int REGISTER_ACTIVITY_ABSENT = 0;
+
+    /**
+     * 参与活动
+     */
+    public static final int REGISTER_ACTIVITY_ATTEND = 1;
 }

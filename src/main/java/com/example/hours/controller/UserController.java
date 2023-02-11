@@ -33,9 +33,13 @@ public class UserController {
         return userService.getById(id);
     }
 
+    /**
+     * 获取当前用户信息
+     * @return {@link Result<UserVo>}
+     */
     @GetMapping("/info")
-    public Result<UserVo> getUserVo(@RequestParam("id") Integer id) {
-        UserVo userVo = userService.getUserVo(id);
+    public Result<UserVo> getUserVo() {
+        UserVo userVo = userService.getUserVo();
         return Result.success(userVo);
     }
 

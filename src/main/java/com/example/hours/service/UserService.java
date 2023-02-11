@@ -6,7 +6,7 @@ import com.example.hours.vo.UserVo;
 
 public interface UserService extends IService<User> {
 
-    UserVo getUserVo(Integer id);
+    UserVo getUserVo();
 
     void updateUserInfo(User user);
 

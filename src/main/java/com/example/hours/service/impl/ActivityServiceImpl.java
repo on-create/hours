@@ -1,15 +1,19 @@
 package com.example.hours.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.hours.common.constant.CommonConstant;
 import com.example.hours.common.constant.EntityConstant;
 import com.example.hours.common.enums.ZoneEnum;
 import com.example.hours.dao.ActivityDao;
 import com.example.hours.entity.Activity;
+import com.example.hours.entity.RegisterActivity;
 import com.example.hours.exception.DraftException;
 import com.example.hours.exception.TimeValidException;
 import com.example.hours.service.ActivityService;
+import com.example.hours.service.RegisterActivityService;
 import com.example.hours.utils.CommonUtils;
 import com.example.hours.utils.page.PageUtils;
 import com.example.hours.utils.page.Query;
@@ -17,16 +21,25 @@ import com.example.hours.vo.ActivityVo;
 import com.example.hours.vo.SimpleActivityVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service("activityService")
 public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> implements ActivityService {
+
+    @Value("${spring.jackson.date-format}")
+    private String dateFormat;
+
+    @Autowired
+    private RegisterActivityService registerActivityService;
 
     /**
      * 保存新增活动 或 草稿添加内容后更新数据
@@ -138,27 +151,35 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
     @Override
     public PageUtils getActivityListByStatus(Map<String, Object> params) {
         // TODO 获取当前用户 id，作为查询条件之一
-        QueryWrapper<Activity> queryWrapper = new QueryWrapper<Activity>();
-        // 查询指定字段
-        queryWrapper.select("id", "number", "maximum", "picture", "theme",
-                "apply_start_time", "apply_end_time", "activity_start_time", "activity_end_time");
+        LambdaQueryWrapper<Activity> queryWrapper = new LambdaQueryWrapper<Activity>().select(
+                Activity::getId,
+                Activity::getNumber,
+                Activity::getMaximum,
+                Activity::getPicture,
+                Activity::getTheme,
+                Activity::getAddress,
+                Activity::getApplyStartTime,
+                Activity::getApplyEndTime,
+                Activity::getActivityStartTime,
+                Activity::getActivityEndTime
+        );
 
         String statusStr = (String) params.get("status");
         if (StringUtils.isNotBlank(statusStr)) {
             int status = Integer.parseInt(statusStr);
             // 草稿
             if (status == EntityConstant.ACTIVITY_Draft) {
-                queryWrapper.eq("status", EntityConstant.ACTIVITY_Draft);
+                queryWrapper.eq(Activity::getStatus, EntityConstant.ACTIVITY_Draft);
             }
 
             // 待审批
             if (status == EntityConstant.ACTIVITY_PENDING_APPROVAL) {
-                queryWrapper.eq("status", EntityConstant.ACTIVITY_PENDING_APPROVAL);
+                queryWrapper.eq(Activity::getStatus, EntityConstant.ACTIVITY_PENDING_APPROVAL);
             }
 
             // 审批通过
             if (status == EntityConstant.ACTIVITY_APPROVE) {
-                queryWrapper.eq("status", EntityConstant.ACTIVITY_APPROVE);
+                queryWrapper.eq(Activity::getStatus, EntityConstant.ACTIVITY_APPROVE);
             }
         }
 
@@ -182,9 +203,23 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
     @Override
     public ActivityVo getActivityVo(Integer id) {
         Activity activity = this.getOne(
-                new QueryWrapper<Activity>().eq("id", id)
-                        .select("id", "number", "maximum", "picture", "theme", "introduction", "reward",
-                                "apply_start_time", "apply_end_time", "activity_start_time", "activity_end_time")
+                new LambdaQueryWrapper<Activity>().eq(Activity::getId, id)
+                        .select(
+                                Activity::getId,
+                                Activity::getNumber,
+                                Activity::getMaximum,
+                                Activity::getPicture,
+                                Activity::getTheme,
+                                Activity::getAddress,
+                                Activity::getSignIn,
+                                Activity::getSignOut,
+                                Activity::getIntroduction,
+                                Activity::getReward,
+                                Activity::getApplyStartTime,
+                                Activity::getApplyEndTime,
+                                Activity::getActivityStartTime,
+                                Activity::getActivityEndTime
+                        )
         );
         ActivityVo activityVo = new ActivityVo();
         BeanUtils.copyProperties(activity, activityVo);
@@ -216,5 +251,67 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
             // 执行更新
             this.updateById(activity);
         }
+    }
+
+    @Override
+    public PageUtils getMyActivityList(Map<String, Object> params) {
+        List<Integer> activityIds = registerActivityService.getActivityIds();
+        LambdaQueryWrapper<Activity> queryWrapper = new LambdaQueryWrapper<Activity>().select(
+                Activity::getId,
+                Activity::getNumber,
+                Activity::getMaximum,
+                Activity::getPicture,
+                Activity::getTheme,
+                Activity::getAddress,
+                Activity::getApplyStartTime,
+                Activity::getApplyEndTime,
+                Activity::getActivityStartTime,
+                Activity::getActivityEndTime
+        ).in(Activity::getId, activityIds);
+
+        String activityStatusStr = (String) params.get("activityStatus");
+        if (StringUtils.isNotBlank(activityStatusStr)) {
+            // 获取当前格式化时间
+            LocalDateTime nowTime = LocalDateTime.now(ZoneId.of(ZoneEnum.SHANGHAI.getZone()));
+            String now = DateTimeFormatter.ofPattern(dateFormat).format(nowTime);
+
+            int activityStatus = Integer.parseInt(activityStatusStr);
+            // 未开始
+            if (activityStatus == CommonConstant.NOT_STARTED) {
+                queryWrapper.gt(Activity::getActivityStartTime, nowTime);
+            }
+
+            // 进行中
+            if (activityStatus == CommonConstant.IN_PROGRESS) {
+                queryWrapper.le(Activity::getActivityStartTime, nowTime)
+                        .ge(Activity::getActivityEndTime, nowTime);
+            }
+
+            // 已结束
+            if (activityStatus == CommonConstant.HAVE_ENDED) {
+                queryWrapper.lt(Activity::getActivityEndTime, nowTime);
+            }
+
+            // 我创建的
+            if (activityStatus == CommonConstant.CREATED_BY_ME) {
+                // TODO 使用当前用户id替换
+                queryWrapper.eq(Activity::getApplicantId, 1);
+            }
+        }
+
+        IPage<Activity> page = this.page(
+                new Query<Activity>().getPage(params),
+                queryWrapper
+        );
+
+        PageUtils pageUtils = new PageUtils(page);
+        List<SimpleActivityVo> simpleActivityVoList = page.getRecords().stream().map(activity -> {
+            SimpleActivityVo simpleActivityVo = new SimpleActivityVo();
+            BeanUtils.copyProperties(activity, simpleActivityVo);
+            return simpleActivityVo;
+        }).collect(Collectors.toList());
+
+        pageUtils.setList(simpleActivityVoList);
+        return pageUtils;
     }
 }

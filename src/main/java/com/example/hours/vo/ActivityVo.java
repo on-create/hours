@@ -23,6 +23,11 @@ public class ActivityVo {
     private Integer maximum;
 
     /**
+     * 活动地点
+     */
+    private String address;
+
+    /**
      * 活动图片地址
      */
     private String picture;
@@ -41,6 +46,16 @@ public class ActivityVo {
      * 活动学时奖励
      */
     private Float reward;
+
+    /**
+     * 签到方式
+     */
+    private Integer signIn;
+
+    /**
+     * 签退方式
+     */
+    private Integer signOut;
 
     // TODO 存储报名人信息
 

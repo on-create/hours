@@ -35,11 +35,21 @@ public class ActivityController {
     }
 
     /**
+     * 我的活动列表
+     * @return {@link Result<PageUtils>}
+     */
+    @GetMapping("/myList")
+    public Result<PageUtils> getMyActivityList(@RequestParam Map<String, Object> params) {
+        PageUtils page = activityService.getMyActivityList(params);
+        return Result.success(page);
+    }
+
+    /**
      * 获取活动的详细信息
      * @param id 活动 id
      * @return {@link Result<ActivityVo>}
      */
-    @GetMapping("/activityInfo")
+    @GetMapping("/info")
     public Result<ActivityVo> getActivityInfo(
             @NotNull(message = "id 不能为空")
             @Min(value = 1, message = "id 必须是正数")
@@ -70,6 +80,11 @@ public class ActivityController {
         return Result.success();
     }
 
+    /**
+     * 更新草稿信息
+     * @param activity 活动
+     * @return {@link Result<>}
+     */
     @PostMapping("/update_draft")
     public Result<Object> updateDraft(@Validated(TemporaryGroup.class) @RequestBody Activity activity) {
         activityService.updateDraft(activity);

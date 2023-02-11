@@ -49,10 +49,16 @@ public class Activity implements Serializable {
     /**
      * 活动主题
      */
-    @Length(min = 5, max = 20, message = "主题长度不能小于5或大于20个字符",
-            groups = {AddGroup.class, TemporaryGroup.class, UpdateGroup.class})
+    @Length(max = 30, message = "主题长度不能大于30个字符", groups = {AddGroup.class, TemporaryGroup.class, UpdateGroup.class})
     @NotBlank(message = "主题不能为空", groups = {AddGroup.class})
     private String theme;
+
+    /**
+     * 活动地点
+     */
+    @Length(max = 30, message = "主题长度不能大于30个字符", groups = {AddGroup.class, TemporaryGroup.class, UpdateGroup.class})
+    @NotBlank(message = "活动地点不能为空", groups = {AddGroup.class})
+    private String address;
 
     /**
      * 活动简介
@@ -85,6 +91,18 @@ public class Activity implements Serializable {
     @Max(value = 9, message = "单次奖励学时不能超过9个学时", groups = {AddGroup.class, TemporaryGroup.class})
     @NotNull(message = "学时奖励不能为空", groups = {AddGroup.class})
     private Float reward;
+
+    /**
+     * 签到方式
+     */
+    @Min(value = 0, message = "不能为负数", groups = {AddGroup.class, TemporaryGroup.class, UpdateGroup.class})
+    private Integer signIn;
+
+    /**
+     * 签退方式
+     */
+    @Min(value = 0, message = "不能为负数", groups = {AddGroup.class, TemporaryGroup.class, UpdateGroup.class})
+    private Integer signOut;
 
     /**
      * 活动状态

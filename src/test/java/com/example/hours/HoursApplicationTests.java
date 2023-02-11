@@ -26,4 +26,11 @@ class HoursApplicationTests {
             this.name = name;
         }
     }
+
+    @Test
+    public void testYear() {
+        String academicYear = CommonUtils.getAcademicYear();
+        System.out.println(academicYear);
+        System.out.println(2022 + "-" + (2022 + 1));
+    }
 }

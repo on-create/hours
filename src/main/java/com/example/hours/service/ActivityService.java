@@ -22,4 +22,6 @@ public interface ActivityService extends IService<Activity> {
     void deleteDraft(Integer id);
 
     void updateDraft(Activity activity);
+
+    PageUtils getMyActivityList(Map<String, Object> params);
 }

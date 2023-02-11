@@ -27,9 +27,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
     private RedisUtils redisUtils;
 
     @Override
-    public UserVo getUserVo(Integer id) {
-        // TODO 获取指定字段
-        User user = this.getById(id);
+    public UserVo getUserVo() {
+        // TODO 获取当前用户id
+        User user = this.getById(2);
         if (user == null) {
             // TODO 抛出异常，交由全局异常处理
             throw new RuntimeException("用户不存在");
@@ -41,6 +41,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserS
 
     @Override
     public void updateUserInfo(User user) {
+        user.setId(2);
+        System.out.println(user);
         this.update(
                 user,
                 new UpdateWrapper<User>().eq("id", user.getId())

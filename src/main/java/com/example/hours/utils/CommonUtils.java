@@ -1,8 +1,12 @@
 package com.example.hours.utils;
 
+import com.example.hours.common.enums.ZoneEnum;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 
 public class CommonUtils {
 
@@ -31,5 +35,19 @@ public class CommonUtils {
             e.printStackTrace();
         }
         return true;
+    }
+
+    /**
+     * 获取当前学年
+     * @return 当前学年字符串
+     */
+    public static String getAcademicYear() {
+        LocalDateTime now = LocalDateTime.now(ZoneId.of(ZoneEnum.SHANGHAI.getZone()));
+        Month month = now.getMonth();
+        int year = now.getYear();
+        if (month.getValue() < Month.SEPTEMBER.getValue()) {
+            return (year - 1) + "-" + year;
+        }
+        return year + "-" + (year + 1);
     }
 }
