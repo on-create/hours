@@ -42,12 +42,20 @@ public class CommonUtils {
      * @return 当前学年字符串
      */
     public static String getAcademicYear() {
-        LocalDateTime now = LocalDateTime.now(ZoneId.of(ZoneEnum.SHANGHAI.getZone()));
+        LocalDateTime now = getNowTime();
         Month month = now.getMonth();
         int year = now.getYear();
         if (month.getValue() < Month.SEPTEMBER.getValue()) {
             return (year - 1) + "-" + year;
         }
         return year + "-" + (year + 1);
+    }
+
+    /**
+     * 当前时间
+     * @return LocalDateTime
+     */
+    public static LocalDateTime getNowTime() {
+        return LocalDateTime.now(ZoneId.of(ZoneEnum.SHANGHAI.getZone()));
     }
 }

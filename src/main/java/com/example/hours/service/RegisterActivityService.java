@@ -11,4 +11,10 @@ public interface RegisterActivityService extends IService<RegisterActivity> {
     void registerActivity(RegisterActivityVo registerActivityVo);
 
     List<Integer> getActivityIds();
+
+    Integer getRegisterId(Integer activityId);
+
+    void updateSignIn(Integer registerId);
+
+    void updateSignOut(Integer registerId);
 }

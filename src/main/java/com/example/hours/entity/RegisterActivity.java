@@ -46,9 +46,14 @@ public class RegisterActivity implements Serializable {
     private Integer activityId;
 
     /**
-     * 用户参与状态，0-未参与  1-参与
+     * 签到时间
      */
-    private Integer status;
+    private LocalDateTime signInTime;
+
+    /**
+     * 签退时间
+     */
+    private LocalDateTime signOutTime;
 
     /**
      * 创建时间

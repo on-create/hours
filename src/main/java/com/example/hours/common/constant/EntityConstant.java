@@ -36,13 +36,5 @@ public class EntityConstant {
 
     //- - - - - - - - - - - - - - - - - - - - -  RegisterActivity 常量 - - - - - - - - - - - - - - - - - - - -
 
-    /**
-     * 未参与活动
-     */
-    public static final int REGISTER_ACTIVITY_ABSENT = 0;
-
-    /**
-     * 参与活动
-     */
-    public static final int REGISTER_ACTIVITY_ATTEND = 1;
+    public static final String REGISTER_ACTIVITY_ID = "registerId: ";
 }

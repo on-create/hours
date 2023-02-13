@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 活动报名 控制类
+ */
 @RestController
 @RequestMapping("/register_activity")
 public class RegisterActivityController {

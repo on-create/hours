@@ -16,6 +16,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
+/**
+ * 活动控制类
+ */
 @RestController
 @RequestMapping("/activity")
 @Validated

@@ -1,11 +1,22 @@
 package com.example.hours;
 
+import com.example.hours.service.RegisterActivityService;
 import com.example.hours.utils.CommonUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class HoursApplicationTests {
+
+    @Autowired
+    private RegisterActivityService registerActivityService;
+
+    @Test
+    void testUpdate() {
+        registerActivityService.updateSignIn(1);
+        registerActivityService.updateSignOut(1);
+    }
 
     @Test
     void contextLoads() {

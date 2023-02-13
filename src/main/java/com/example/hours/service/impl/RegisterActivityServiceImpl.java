@@ -1,26 +1,17 @@
 package com.example.hours.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.hours.common.constant.CommonConstant;
-import com.example.hours.common.constant.EntityConstant;
 import com.example.hours.common.enums.ZoneEnum;
 import com.example.hours.dao.RegisterActivityDao;
 import com.example.hours.entity.RegisterActivity;
 import com.example.hours.exception.RegisterFailedException;
 import com.example.hours.service.RegisterActivityService;
-import com.example.hours.utils.page.PageUtils;
-import com.example.hours.utils.page.Query;
+import com.example.hours.utils.CommonUtils;
 import com.example.hours.vo.RegisterActivityVo;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service("registerActivityService")
@@ -35,11 +26,11 @@ public class RegisterActivityServiceImpl extends ServiceImpl<RegisterActivityDao
             throw new RegisterFailedException("报名人数已满");
         }
 
-        if (registerActivityVo.getApplyStartTime().isAfter(LocalDateTime.now(ZoneId.of(ZoneEnum.SHANGHAI.getZone())))) {
+        if (registerActivityVo.getApplyStartTime().isAfter(CommonUtils.getNowTime())) {
             throw new RegisterFailedException("报名还未开始");
         }
 
-        if (registerActivityVo.getApplyEndTime().isBefore(LocalDateTime.now(ZoneId.of(ZoneEnum.SHANGHAI.getZone())))) {
+        if (registerActivityVo.getApplyEndTime().isBefore(CommonUtils.getNowTime())) {
             throw new RegisterFailedException("报名已结束");
         }
 
@@ -47,7 +38,6 @@ public class RegisterActivityServiceImpl extends ServiceImpl<RegisterActivityDao
         RegisterActivity registerActivity = RegisterActivity.builder()
                 .userId(1)
                 .activityId(registerActivityVo.getId())
-                .status(EntityConstant.REGISTER_ACTIVITY_ABSENT)
                 .build();
         this.save(registerActivity);
     }
@@ -62,5 +52,37 @@ public class RegisterActivityServiceImpl extends ServiceImpl<RegisterActivityDao
         List<RegisterActivity> registerActivities = this.baseMapper.selectList(queryWrapper);
         return registerActivities.stream()
                 .map(RegisterActivity::getActivityId).collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer getRegisterId(Integer activityId) {
+        // TODO 获取当前用户id，作为查询条件之一
+        LambdaQueryWrapper<RegisterActivity> queryWrapper = new LambdaQueryWrapper<RegisterActivity>()
+                .eq(RegisterActivity::getActivityId, activityId)
+                .eq(RegisterActivity::getUserId, 1)
+                .select(RegisterActivity::getId);
+        RegisterActivity registerActivity = this.getOne(queryWrapper);
+        if (registerActivity == null) {
+            throw new RuntimeException("活动不存在");
+        }
+        return registerActivity.getId();
+    }
+
+    @Override
+    public void updateSignIn(Integer registerId) {
+        RegisterActivity registerActivity = RegisterActivity.builder()
+                .id(registerId)
+                .signInTime(CommonUtils.getNowTime())
+                .build();
+        this.updateById(registerActivity);
+    }
+
+    @Override
+    public void updateSignOut(Integer registerId) {
+        RegisterActivity registerActivity = RegisterActivity.builder()
+                .id(registerId)
+                .signOutTime(CommonUtils.getNowTime())
+                .build();
+        this.updateById(registerActivity);
     }
 }
