@@ -2,6 +2,18 @@ package com.example.hours.common.constant;
 
 public class EntityConstant {
 
+    //- - - - - - - - - - - - - - - - - - - - -  Common 通用常量 - - - - - - - - - - - - - - - - - - - -
+
+    /**
+     * 未删除
+     */
+    public static final int COMMON_UNDELETED = 0;
+
+    /**
+     * 已删除
+     */
+    public static final int COMMON_DELETED = 1;
+
     //- - - - - - - - - - - - - - - - - - - - -  Activity 常量 - - - - - - - - - - - - - - - - - - - -
 
     /**
@@ -37,4 +49,28 @@ public class EntityConstant {
     //- - - - - - - - - - - - - - - - - - - - -  RegisterActivity 常量 - - - - - - - - - - - - - - - - - - - -
 
     public static final String REGISTER_ACTIVITY_ID = "registerId: ";
+
+    //- - - - - - - - - - - - - - - - - - - - -  Resource 常量 - - - - - - - - - - - - - - - - - - - -
+
+    /**
+     * 不允许匿名访问
+     */
+    public static final int RESOURCE_NOT_ANONYMOUS = 0;
+
+    /**
+     * 允许匿名访问
+     */
+    public static final int RESOURCE_ANONYMOUS = 1;
+
+    //- - - - - - - - - - - - - - - - - - - - -  Role 常量 - - - - - - - - - - - - - - - - - - - -
+
+    /**
+     * 启用
+     */
+    public static final int ROLE_ENABLE = 0;
+
+    /**
+     * 禁用
+     */
+    public static final int ROLE_DISABLE = 1;
 }

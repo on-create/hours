@@ -21,7 +21,7 @@ public class UserServiceTest {
                 .sign("个性签名")
                 .email("email@qq.com")
                 .gender(1)
-                .status(1)
+                .delFlag(1)
                 .build();
         userService.save(user);
         System.out.println(user);

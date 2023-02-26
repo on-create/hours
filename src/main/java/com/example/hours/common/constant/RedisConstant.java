@@ -14,4 +14,9 @@ public class RedisConstant {
      * 验证码过期时间（s）
      */
     public static final long CODE_EXPIRE_TIME = 15 * 60;
+
+    /**
+     * 登录用户前缀
+     */
+    public static final String LOGIN_USER_PREFIX_KEY = "login:";
 }

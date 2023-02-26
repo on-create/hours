@@ -2,7 +2,6 @@ package com.example.hours.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.hours.common.enums.ZoneEnum;
 import com.example.hours.dao.RegisterActivityDao;
 import com.example.hours.entity.RegisterActivity;
 import com.example.hours.exception.RegisterFailedException;

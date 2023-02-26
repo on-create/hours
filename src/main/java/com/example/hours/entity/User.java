@@ -74,11 +74,11 @@ public class User implements Serializable {
     private Integer authority;
 
     /**
-     * 启用状态
+     * 删除标志
      */
-    @TableLogic(value = "1", delval = "0")
+    @TableLogic(value = "0", delval = "1")
     @Null(message = "不能指定状态", groups = {AddGroup.class})
-    private Integer status;
+    private Integer delFlag;
 
     /**
      * 创建时间

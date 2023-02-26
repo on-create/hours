@@ -77,6 +77,15 @@ public class RedisUtils {
     }
 
     /**
+     * 删除单个对象
+     * @param key 键
+     * @return
+     */
+    public boolean delete(String key) {
+        return redisTemplate.delete(key);
+    }
+
+    /**
      * 将值放入缓存并设置时间
      *
      * @param key   键

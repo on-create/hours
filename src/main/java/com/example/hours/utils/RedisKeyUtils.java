@@ -15,4 +15,13 @@ public class RedisKeyUtils {
     public static String codeKey(String key) {
         return RedisConstant.CODE_PREFIX_KEY + key;
     }
+
+    /**
+     * 生成登录用户键
+     * @param key userid
+     * @return 登录用户键
+     */
+    public static String loginUserKey(String key) {
+        return RedisConstant.LOGIN_USER_PREFIX_KEY + key;
+    }
 }

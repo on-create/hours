@@ -2,6 +2,7 @@ package com.example.hours.exception.handler;
 
 import com.example.hours.common.Result;
 import com.example.hours.exception.DraftException;
+import com.example.hours.exception.HourException;
 import com.example.hours.exception.TimeValidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
@@ -92,5 +93,16 @@ public class GlobalExceptionHandler {
     public Result<Object> handleDraftException(DraftException e) {
         log.error("活动草稿异常: {}, 异常类型: {}", e.getMsg(), e.getClass());
         return Result.failed(e.getMsg());
+    }
+
+    /**
+     * 系统异常处理
+     * @param e HourException.class
+     * @return {@link Result<>}
+     */
+    @ExceptionHandler(value = HourException.class)
+    public Result<Object> handleHourException(HourException e) {
+        log.error("系统异常: {}, 异常类型: {}", e.getMessage(), e.getClass());
+        return Result.failed(e.getMessage());
     }
 }
