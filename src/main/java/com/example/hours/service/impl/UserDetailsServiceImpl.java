@@ -35,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new RuntimeException("用户名错误");
         }
 
-        List<String> list = roleDao.selectRoleKeysByUserId(HolderUserUtils.getLoginUserId());
+        List<String> list = roleDao.selectRoleKeysByUserId(user.getId());
         // TODO: 打印测试，后续删除
         System.out.println(list);
         // 封装成 UserDetails 对象返回

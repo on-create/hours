@@ -14,6 +14,16 @@ public class EntityConstant {
      */
     public static final int COMMON_DELETED = 1;
 
+    /**
+     * 启用
+     */
+    public static final int COMMON_ENABLE = 0;
+
+    /**
+     * 禁用
+     */
+    public static final int COMMON_DISABLE = 1;
+
     //- - - - - - - - - - - - - - - - - - - - -  Activity 常量 - - - - - - - - - - - - - - - - - - - -
 
     /**
@@ -62,15 +72,9 @@ public class EntityConstant {
      */
     public static final int RESOURCE_ANONYMOUS = 1;
 
-    //- - - - - - - - - - - - - - - - - - - - -  Role 常量 - - - - - - - - - - - - - - - - - - - -
-
     /**
-     * 启用
+     * 模块id
      */
-    public static final int ROLE_ENABLE = 0;
+    public static final int RESOURCE_MODULE_ID = 0;
 
-    /**
-     * 禁用
-     */
-    public static final int ROLE_DISABLE = 1;
 }

@@ -41,7 +41,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements RoleS
             Role role = Role.builder()
                     .name(roleVO.getName())
                     .roleKey(roleVO.getRoleKey())
-                    .status(EntityConstant.ROLE_ENABLE)
+                    .status(EntityConstant.COMMON_ENABLE)
                     .delFlag(EntityConstant.COMMON_UNDELETED)
                     .build();
             this.save(role);

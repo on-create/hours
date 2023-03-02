@@ -4,6 +4,7 @@ import com.example.hours.common.Result;
 import com.example.hours.service.LoginService;
 import com.example.hours.vo.LoginUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,7 @@ public class LoginController {
      * @return {@link Result<Map>}
      */
     @PostMapping("/login")
-    public Result<Map<String, Object>> login(@RequestBody LoginUserVo loginUserVo) {
+    public Result<Map<String, Object>> login(@Validated @RequestBody LoginUserVo loginUserVo) {
         Map<String, Object> map = loginService.login(loginUserVo);
         return Result.success(map, "登录成功");
     }

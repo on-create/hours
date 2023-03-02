@@ -51,6 +51,6 @@ class HoursApplicationTests {
     @Test
     public void encoder() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(encoder.encode("123456"));
+        System.out.println(encoder.encode("12345678"));
     }
 }

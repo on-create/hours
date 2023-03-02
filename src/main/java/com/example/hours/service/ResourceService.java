@@ -15,4 +15,16 @@ public interface ResourceService extends IService<Resource> {
     List<ResourceVO> getModuleChildren(Integer moduleId);
 
     List<RoleVO> selectRoleVOByResourceId(Integer resourceId);
+
+    void deleteModuleById(Integer moduleId);
+
+    void saveModule(ResourceModuleVO resourceModuleVO);
+
+    void updateModule(ResourceModuleVO resourceModuleVO);
+
+    void saveResource(Resource resource);
+
+    void updateResource(Resource resource);
+
+    void deleteResource(Integer resourceId);
 }
