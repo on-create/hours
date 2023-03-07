@@ -2,7 +2,7 @@ package com.example.hours.controller;
 
 import com.example.hours.common.Result;
 import com.example.hours.service.RegisterActivityService;
-import com.example.hours.vo.RegisterActivityVo;
+import com.example.hours.model.vo.RegisterActivityVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,11 +1,10 @@
-package com.example.hours.vo;
+package com.example.hours.model.vo;
 
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Data
-public class ActivityVo {
+public class SimpleActivityVo {
 
     /**
      * 活动 id
@@ -23,11 +22,6 @@ public class ActivityVo {
     private Integer maximum;
 
     /**
-     * 活动地点
-     */
-    private String address;
-
-    /**
      * 活动图片地址
      */
     private String picture;
@@ -38,26 +32,9 @@ public class ActivityVo {
     private String theme;
 
     /**
-     * 活动简介
+     * 活动地点
      */
-    private String introduction;
-
-    /**
-     * 活动学时奖励
-     */
-    private Float reward;
-
-    /**
-     * 签到方式
-     */
-    private Integer signIn;
-
-    /**
-     * 签退方式
-     */
-    private Integer signOut;
-
-    // TODO 存储报名人信息
+    private String address;
 
     /**
      * 报名开始时间

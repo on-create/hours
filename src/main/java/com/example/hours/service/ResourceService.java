@@ -2,9 +2,9 @@ package com.example.hours.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.hours.entity.Resource;
-import com.example.hours.vo.ResourceModuleVO;
-import com.example.hours.vo.ResourceVO;
-import com.example.hours.vo.RoleVO;
+import com.example.hours.model.vo.ResourceModuleVO;
+import com.example.hours.model.vo.ResourceVO;
+import com.example.hours.model.vo.RoleVO;
 
 import java.util.List;
 

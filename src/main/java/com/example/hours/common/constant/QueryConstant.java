@@ -1,5 +1,6 @@
 package com.example.hours.common.constant;
 
+// TODO 测试后删除
 public class QueryConstant {
 
     /**
@@ -22,8 +23,4 @@ public class QueryConstant {
      */
     public static final String ORDER = "order";
 
-    /**
-     * 升序
-     */
-    public static final String ASC = "asc";
 }

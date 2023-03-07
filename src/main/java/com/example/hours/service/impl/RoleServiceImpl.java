@@ -1,13 +1,17 @@
 package com.example.hours.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.hours.common.constant.EntityConstant;
 import com.example.hours.dao.RoleDao;
 import com.example.hours.entity.Role;
 import com.example.hours.exception.HourException;
 import com.example.hours.service.RoleService;
-import com.example.hours.vo.RoleVO;
+import com.example.hours.model.vo.RoleVO;
+import com.example.hours.utils.page.PageParams;
+import com.example.hours.utils.page.PageResult;
+import com.example.hours.utils.page.PageUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +22,12 @@ import java.util.stream.Collectors;
 @Service("roleService")
 public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements RoleService {
 
-    @Override
+    /*@Override
     public List<RoleVO> getRoleVOs(Integer status) {
         List<Role> roles = this.baseMapper.selectList(
                 new LambdaQueryWrapper<Role>()
                         .eq(Role::getStatus, status)
-                        .select(Role::getId, Role::getName, Role::getRoleKey)
+                        .select(Role::getId, Role::getRoleName, Role::getRoleKey)
         );
 
         return roles.stream()
@@ -39,7 +43,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements RoleS
         // 保存
         if (Objects.nonNull(roleVO.getStatus())) {
             Role role = Role.builder()
-                    .name(roleVO.getName())
+                    .roleName(roleVO.getName())
                     .roleKey(roleVO.getRoleKey())
                     .status(EntityConstant.COMMON_ENABLE)
                     .delFlag(EntityConstant.COMMON_UNDELETED)
@@ -62,5 +66,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements RoleS
             throw new HourException("该角色下存在用户");
         }
         this.baseMapper.deleteBatchIds(roleIdList);
+    }*/
+
+    /**
+     * 根据条件分页查询角色数据
+     * @param role 角色信息
+     * @return 角色数据集合信息
+     */
+    @Override
+    public PageResult selectRoleList(Role role, PageParams params) {
+        IPage<?> page = PageUtils.initPage(params);
+        List<Role> roles = this.baseMapper.selectRoleList(page, role);
+        return PageUtils.selectResult(page, roles);
     }
 }

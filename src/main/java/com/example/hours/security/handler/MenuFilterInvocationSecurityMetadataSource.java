@@ -1,15 +1,13 @@
-package com.example.hours.handler;
+package com.example.hours.security.handler;
 
-import com.example.hours.bo.ResourceRoleBO;
+import com.example.hours.model.bo.ResourceRoleBO;
 import com.example.hours.common.constant.EntityConstant;
-import com.example.hours.dao.MenuDao;
 import com.example.hours.dao.ResourceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
-import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 
@@ -17,7 +15,7 @@ import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
 
-@Component
+//@Component
 public class MenuFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     /**

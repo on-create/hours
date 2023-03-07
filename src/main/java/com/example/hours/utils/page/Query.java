@@ -15,6 +15,7 @@ import com.example.hours.common.constant.QueryConstant;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 查询参数
@@ -23,7 +24,17 @@ import java.util.Map;
  */
 public class Query<T> {
 
+    /**
+     * 升序
+     */
+    public static final String ASC = "asc";
+
+    // TODO 后期修改分页
     public IPage<T> getPage(Map<String, Object> params) {
+        return this.getPage(params, null, false);
+    }
+
+    public IPage<T> getPage(PageParams params) {
         return this.getPage(params, null, false);
     }
 
@@ -52,7 +63,7 @@ public class Query<T> {
 
         //前端字段排序
         if(StringUtils.isNotEmpty(orderField) && StringUtils.isNotEmpty(order)){
-            if(QueryConstant.ASC.equalsIgnoreCase(order)) {
+            if(Query.ASC.equalsIgnoreCase(order)) {
                 return page.addOrder(OrderItem.asc(orderField));
             }else {
                 return page.addOrder(OrderItem.desc(orderField));
@@ -68,6 +79,53 @@ public class Query<T> {
         if(isAsc) {
             page.addOrder(OrderItem.asc(defaultOrderField));
         }else {
+            page.addOrder(OrderItem.desc(defaultOrderField));
+        }
+
+        return page;
+    }
+
+    public IPage<T> getPage(PageParams params, String defaultOrderField, boolean isAsc) {
+        //分页参数
+        long curPage = 1;
+        long limit = 10;
+
+        if(Objects.nonNull(params.getCurrPage())){
+            curPage = params.getCurrPage();
+        }
+        if(Objects.nonNull(params.getLimit())){
+            limit = params.getLimit();
+        }
+
+        //分页对象
+        Page<T> page = new Page<>(curPage, limit);
+
+        //分页参数
+        //params.put(QueryConstant.PAGE, page);
+
+        //排序字段
+        //防止SQL注入（因为sidx、order是通过拼接SQL实现排序的，会有SQL注入风险）
+        String orderField = SQLFilter.sqlInject(params.getOrderField());
+        String order = params.getOrder();
+
+        //前端字段排序
+        if(StringUtils.isNotEmpty(orderField) && StringUtils.isNotEmpty(order)){
+            if(Query.ASC.equalsIgnoreCase(order)) {
+                return page.addOrder(OrderItem.asc(orderField));
+            }else {
+                return page.addOrder(OrderItem.desc(orderField));
+            }
+        }
+
+        //没有排序字段，则不排序
+        if(StringUtils.isBlank(defaultOrderField)){
+            return page;
+        }
+
+        //默认排序
+        if(isAsc) {
+            page.addOrder(OrderItem.asc(defaultOrderField));
+        } else {
             page.addOrder(OrderItem.desc(defaultOrderField));
         }
 

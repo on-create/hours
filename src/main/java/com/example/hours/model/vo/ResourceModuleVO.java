@@ -1,4 +1,4 @@
-package com.example.hours.vo;
+package com.example.hours.model.vo;
 
 import com.example.hours.common.validator.group.AddGroup;
 import com.example.hours.common.validator.group.UpdateGroup;

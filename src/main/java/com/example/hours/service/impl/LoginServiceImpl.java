@@ -7,7 +7,7 @@ import com.example.hours.utils.HolderUserUtils;
 import com.example.hours.utils.JwtUtils;
 import com.example.hours.utils.RedisKeyUtils;
 import com.example.hours.utils.RedisUtils;
-import com.example.hours.vo.LoginUserVo;
+import com.example.hours.model.vo.LoginUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

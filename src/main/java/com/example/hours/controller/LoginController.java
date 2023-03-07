@@ -2,10 +2,9 @@ package com.example.hours.controller;
 
 import com.example.hours.common.Result;
 import com.example.hours.service.LoginService;
-import com.example.hours.vo.LoginUserVo;
+import com.example.hours.model.vo.LoginUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

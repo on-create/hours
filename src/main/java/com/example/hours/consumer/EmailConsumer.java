@@ -2,7 +2,7 @@ package com.example.hours.consumer;
 
 import com.alibaba.fastjson.JSON;
 import com.example.hours.common.constant.RabbitMQConstant;
-import com.example.hours.vo.EmailVo;
+import com.example.hours.model.vo.EmailVo;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;

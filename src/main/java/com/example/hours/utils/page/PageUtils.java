@@ -1,100 +1,44 @@
 package com.example.hours.utils.page;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 分页工具类
  */
-public class PageUtils implements Serializable {
-	private static final long serialVersionUID = 1L;
-	/**
-	 * 总记录数
-	 */
-	private int totalCount;
-	/**
-	 * 每页记录数
-	 */
-	private int pageSize;
-	/**
-	 * 总页数
-	 */
-	private int totalPage;
-	/**
-	 * 当前页数
-	 */
-	private int currPage;
-	/**
-	 * 列表数据
-	 */
-	private List<?> list;
-	
-	/**
-	 * 分页
-	 * @param list        列表数据
-	 * @param totalCount  总记录数
-	 * @param pageSize    每页记录数
-	 * @param currPage    当前页数
-	 */
-	public PageUtils(List<?> list, int totalCount, int pageSize, int currPage) {
-		this.list = list;
-		this.totalCount = totalCount;
-		this.pageSize = pageSize;
-		this.currPage = currPage;
-		this.totalPage = (int)Math.ceil((double)totalCount/pageSize);
-	}
+public class PageUtils {
 
-	/**
-	 * 分页
-	 */
-	public PageUtils(IPage<?> page) {
-		this.list = page.getRecords();
-		this.totalCount = (int)page.getTotal();
-		this.pageSize = (int)page.getSize();
-		this.currPage = (int)page.getCurrent();
-		this.totalPage = (int)page.getPages();
-	}
+    /**
+     * 初始化分页
+     * @param params 分页参数信息
+     * @return Page
+     */
+	public static IPage<?> initPage(PageParams params) {
+	    // 分页参数
+	    long currPage = 1L;
+	    long limit = 10L;
 
-	public int getTotalCount() {
-		return totalCount;
-	}
+        if (Objects.nonNull(params.getCurrPage())) {
+            currPage = params.getCurrPage();
+        }
 
-	public void setTotalCount(int totalCount) {
-		this.totalCount = totalCount;
-	}
+        if (Objects.nonNull(params.getLimit())) {
+            limit = params.getLimit();
+        }
+        return new Page<>(currPage, limit);
+    }
 
-	public int getPageSize() {
-		return pageSize;
-	}
-
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
-	}
-
-	public int getTotalPage() {
-		return totalPage;
-	}
-
-	public void setTotalPage(int totalPage) {
-		this.totalPage = totalPage;
-	}
-
-	public int getCurrPage() {
-		return currPage;
-	}
-
-	public void setCurrPage(int currPage) {
-		this.currPage = currPage;
-	}
-
-	public List<?> getList() {
-		return list;
-	}
-
-	public void setList(List<?> list) {
-		this.list = list;
-	}
-	
+    /**
+     * 获取分页查询结果
+     * @param page 分页参数
+     * @return 分页查询结果
+     */
+    public static PageResult selectResult(IPage<?> page, List<?> records) {
+        PageResult pageResult = new PageResult(page);
+        pageResult.setList(records);
+        return pageResult;
+    }
 }

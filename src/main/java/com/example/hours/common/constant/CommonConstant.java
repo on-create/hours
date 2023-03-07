@@ -23,4 +23,14 @@ public class CommonConstant {
      * 我创建的
      */
     public static final int CREATED_BY_ME = 4;
+
+    /**
+     * 校验是否唯一的返回标识
+     */
+    public static final boolean UNIQUE = true;
+
+    /**
+     * 不唯一
+     */
+    public final static boolean NOT_UNIQUE = false;
 }

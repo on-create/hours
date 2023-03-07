@@ -3,7 +3,7 @@ package com.example.hours.controller;
 import com.example.hours.common.Result;
 import com.example.hours.entity.WelfareHour;
 import com.example.hours.service.WelfareHoursService;
-import com.example.hours.utils.page.PageUtils;
+import com.example.hours.utils.page.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,11 +40,11 @@ public class WelfareHourController {
 
     /**
      * 查找当前用户的所有学年学时信息
-     * @return {@link Result<PageUtils>}
+     * @return {@link Result<PageResult>}
      */
     @GetMapping("/info_list")
-    public Result<PageUtils> getHourList(@RequestParam Map<String, Object> params) {
-        PageUtils page = welfareHoursService.getHourList(params);
+    public Result<PageResult> getHourList(@RequestParam Map<String, Object> params) {
+        PageResult page = welfareHoursService.getHourList(params);
         return Result.success(page);
     }
 }

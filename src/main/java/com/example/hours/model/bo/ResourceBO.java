@@ -1,4 +1,4 @@
-package com.example.hours.bo;
+package com.example.hours.model.bo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

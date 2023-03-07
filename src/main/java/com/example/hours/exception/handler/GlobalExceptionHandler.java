@@ -4,6 +4,7 @@ import com.example.hours.common.Result;
 import com.example.hours.exception.DraftException;
 import com.example.hours.exception.HourException;
 import com.example.hours.exception.TimeValidException;
+import com.example.hours.exception.WarnException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -104,5 +105,16 @@ public class GlobalExceptionHandler {
     public Result<Object> handleHourException(HourException e) {
         log.error("系统异常: {}, 异常类型: {}", e.getMessage(), e.getClass());
         return Result.failed(e.getMessage());
+    }
+
+    /**
+     * 警告信息异常处理
+     * @param e WarnException.class
+     * @return {@link Result<>}
+     */
+    @ExceptionHandler(value = WarnException.class)
+    public Result<Object> handleWarnException(WarnException e) {
+        log.error("警告信息: {}, 异常类型: {}", e.getMessage(), e.getClass());
+        return Result.warn(e.getMessage());
     }
 }

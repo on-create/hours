@@ -7,7 +7,7 @@ import com.example.hours.entity.RegisterActivity;
 import com.example.hours.exception.RegisterFailedException;
 import com.example.hours.service.RegisterActivityService;
 import com.example.hours.utils.CommonUtils;
-import com.example.hours.vo.RegisterActivityVo;
+import com.example.hours.model.vo.RegisterActivityVo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

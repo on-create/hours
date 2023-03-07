@@ -4,4 +4,100 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.hours.dao.MenuDao">
 
+    <resultMap id="MenuResult" type="com.example.hours.entity.Menu">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="parent_name" property="parentName"/>
+        <result column="order_num" property="orderNum"/>
+        <result column="path" property="path"/>
+        <result column="component" property="component"/>
+        <result column="type" property="type"/>
+        <result column="visible" property="visible"/>
+        <result column="status" property="status"/>
+        <result column="perms" property="perms"/>
+        <result column="icon" property="icon"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <sql id="selectMenuVo">
+        select id, name, parent_id, order_num, path, component, type, visible, status, ifnull(perms, '') as perms, icon, create_time
+        from sys_menu
+    </sql>
+
+    <select id="selectMenuList" parameterType="com.example.hours.entity.Menu" resultMap="MenuResult">
+        <include refid="selectMenuVo"/>
+        <where>
+            <if test="menu.name != null and menu.name != ''">
+                AND name like concat('%', #{menu.name}, '%')
+            </if>
+            <if test="menu.visible != null and menu.visible != ''">
+                AND visible = #{menu.visible}
+            </if>
+            <if test="menu.status != null and menu.status != ''">
+                AND status = #{menu.status}
+            </if>
+        </where>
+        order by parent_id, order_num
+    </select>
+
+    <select id="selectMenuListByUserId" parameterType="com.example.hours.entity.Menu" resultMap="MenuResult">
+        SELECT DISTINCT
+            m.id,
+            m.parent_id,
+            m.name,
+            m.path,
+            m.component,
+            m.visible,
+            m.status,
+            ifnull( m.perms, '' ) AS perms,
+            m.type,
+            m.icon,
+            m.order_num,
+            m.create_time
+        FROM
+            sys_menu m
+                LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+                LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id
+                LEFT JOIN sys_role ro ON ur.role_id = ro.id
+        WHERE
+            ur.user_id = #{userId}
+        <if test="menu.name != null and menu.name != ''">
+            AND m.name like concat('%', #{menu.name}, '%')
+        </if>
+        <if test="menu.visible != null and menu.visible != ''">
+            AND m.visible = #{menu.visible}
+        </if>
+        <if test="menu.status != null and menu.status != ''">
+            AND m.status = #{menu.status}
+        </if>
+        order by m.parent_id, m.order_num
+    </select>
+
+    <select id="selectMenuById" parameterType="integer" resultMap="MenuResult">
+        <include refid="selectMenuVo"/>
+        where id = #{menuId}
+    </select>
+
+    <select id="selectMenuListByRoleId" resultType="integer">
+        SELECT
+            m.id
+        FROM
+            sys_menu m
+                LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+        WHERE
+            rm.role_id = #{roleId}
+        <if test="menuCheckStrictly">
+            AND m.id NOT IN (
+                    SELECT m.parent_id
+                    FROM sys_menu m
+                    INNER JOIN sys_role_menu rm ON m.id = rm.menu_id AND rm.role_id = #{roleId}
+                )
+        </if>
+        order by m.parent_id, m.order_num
+    </select>
 </mapper>

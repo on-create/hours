@@ -9,16 +9,14 @@ import com.example.hours.common.constant.EntityConstant;
 import com.example.hours.common.enums.ZoneEnum;
 import com.example.hours.dao.ActivityDao;
 import com.example.hours.entity.Activity;
-import com.example.hours.entity.RegisterActivity;
 import com.example.hours.exception.DraftException;
 import com.example.hours.exception.TimeValidException;
 import com.example.hours.service.ActivityService;
 import com.example.hours.service.RegisterActivityService;
 import com.example.hours.utils.CommonUtils;
-import com.example.hours.utils.page.PageUtils;
-import com.example.hours.utils.page.Query;
-import com.example.hours.vo.ActivityVo;
-import com.example.hours.vo.SimpleActivityVo;
+import com.example.hours.utils.page.PageResult;
+import com.example.hours.model.vo.ActivityVo;
+import com.example.hours.model.vo.SimpleActivityVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,7 +147,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
     }
 
     @Override
-    public PageUtils getActivityListByStatus(Map<String, Object> params) {
+    public PageResult getActivityListByStatus(Map<String, Object> params) {
         // TODO 获取当前用户 id，作为查询条件之一
         LambdaQueryWrapper<Activity> queryWrapper = new LambdaQueryWrapper<Activity>().select(
                 Activity::getId,
@@ -183,11 +181,13 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
             }
         }
 
-        IPage<Activity> page = this.page(
+        /*IPage<Activity> page = this.page(
                 new Query<Activity>().getPage(params),
                 queryWrapper
-        );
-        PageUtils pageUtils = new PageUtils(page);
+        );*/
+        // TODO 分页修改
+        IPage<Activity> page = null;
+        PageResult pageResult = new PageResult(page);
 
         List<Activity> activityList = page.getRecords();
         List<SimpleActivityVo> simpleActivityVoList = activityList.stream().map(activity -> {
@@ -196,8 +196,8 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
             return simpleActivityVo;
         }).collect(Collectors.toList());
 
-        pageUtils.setList(simpleActivityVoList);
-        return pageUtils;
+        pageResult.setList(simpleActivityVoList);
+        return pageResult;
     }
 
     @Override
@@ -254,7 +254,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
     }
 
     @Override
-    public PageUtils getMyActivityList(Map<String, Object> params) {
+    public PageResult getMyActivityList(Map<String, Object> params) {
         List<Integer> activityIds = registerActivityService.getActivityIds();
         LambdaQueryWrapper<Activity> queryWrapper = new LambdaQueryWrapper<Activity>().select(
                 Activity::getId,
@@ -298,20 +298,21 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
                 queryWrapper.eq(Activity::getApplicantId, 1);
             }
         }
-
-        IPage<Activity> page = this.page(
+        // TODO 分页修改
+        /*IPage<Activity> page = this.page(
                 new Query<Activity>().getPage(params),
                 queryWrapper
-        );
+        );*/
+        IPage<Activity> page = null;
 
-        PageUtils pageUtils = new PageUtils(page);
+        PageResult pageResult = new PageResult(page);
         List<SimpleActivityVo> simpleActivityVoList = page.getRecords().stream().map(activity -> {
             SimpleActivityVo simpleActivityVo = new SimpleActivityVo();
             BeanUtils.copyProperties(activity, simpleActivityVo);
             return simpleActivityVo;
         }).collect(Collectors.toList());
 
-        pageUtils.setList(simpleActivityVoList);
-        return pageUtils;
+        pageResult.setList(simpleActivityVoList);
+        return pageResult;
     }
 }

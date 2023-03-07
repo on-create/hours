@@ -16,4 +16,61 @@
             #{roleId}
         </foreach>
     </select>
+
+    <resultMap id="RoleResult" type="com.example.hours.entity.Role">
+        <id column="id" property="id"/>
+        <result column="role_name" property="roleName"/>
+        <result column="role_key" property="roleKey"/>
+        <result column="role_sort" property="roleSort"/>
+        <result column="data_scope" property="dataScope"/>
+        <result column="menu_check_strictly" property="menuCheckStrictly"/>
+        <result column="status" property="status"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <sql id="selectRoleVo">
+        SELECT DISTINCT
+            r.id,
+            r.role_name,
+            r.role_key,
+            r.role_sort,
+            r.data_scope,
+            r.menu_check_strictly,
+            r.status,
+            r.del_flag,
+            r.create_time,
+            r.remark
+        FROM
+            sys_role r
+                LEFT JOIN sys_user_role ur ON ur.role_id = r.id
+                LEFT JOIN sys_user u ON u.id = ur.user_id
+    </sql>
+
+    <select id="selectRoleById" parameterType="integer" resultMap="RoleResult">
+        <include refid="selectRoleVo"/>
+        where r.id = #{roleId}
+    </select>
+
+    <select id="selectRoleList" parameterType="com.example.hours.entity.Role" resultMap="RoleResult">
+        <include refid="selectRoleVo"/>
+        where r.del_flag = '0'
+        <if test="role.id != null and role.id != 0">
+            AND r.id = #{role.id}
+        </if>
+        <if test="role.roleName != null and role.roleName != ''">
+            AND r.role_name like concat('%', #{role.roleName}, '%')
+        </if>
+        <if test="role.status != null and role.status != ''">
+            AND r.status = #{role.status}
+        </if>
+        <if test="role.roleKey != null and role.roleKey != ''">
+            AND r.role_key like concat('%', #{role.roleKey}, '%')
+        </if>
+        order by r.role_sort
+    </select>
 </mapper>

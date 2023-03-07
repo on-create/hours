@@ -1,21 +1,21 @@
 package com.example.hours.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @TableName("sys_role")
-public class Role implements Serializable {
+public class Role extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,14 +26,34 @@ public class Role implements Serializable {
     private Integer id;
 
     /**
-     * 角色名
+     * 角色名称
      */
-    private String name;
+    @NotBlank(message = "角色名称不能为空")
+    @Length(max = 30, message = "角色名称长度不能超过30个字符")
+    private String roleName;
 
     /**
      * 角色权限字符串
      */
+    @NotBlank(message = "权限字符不能为空")
+    @Length(max = 64, message = "权限字符长度不能超过64个字符")
     private String roleKey;
+
+    /**
+     * 角色排序
+     */
+    @NotNull(message = "显示顺序不能为空")
+    private Integer roleSort;
+
+    /**
+     * 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限）
+     */
+    private String dataScope;
+
+    /**
+     * 菜单树选择项是否关联显示（ 0：父子不互相关联显示 1：父子互相关联显示）
+     */
+    private boolean menuCheckStrictly;
 
     /**
      * 角色状态（0 正常， 1 停用）
@@ -46,17 +66,27 @@ public class Role implements Serializable {
     @TableLogic(value = "0", delval = "1")
     private Integer delFlag;
 
-    /**
-     * 创建时间
-     */
-    @JSONField(serialize = false)
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    /** 用户是否存在此角色标识 默认不存在 */
+    @TableField(exist = false)
+    private boolean flag = false;
 
     /**
-     * 更新时间
+     * 菜单组
      */
-    @JSONField(serialize = false)
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    @TableField(exist = false)
+    private Integer[] menuIds;
+
+    /**
+     * 角色菜单权限
+     */
+    @TableField(exist = false)
+    private Set<String> permissions;
+
+    public boolean isAdmin() {
+        return isAdmin(this.id);
+    }
+
+    public static boolean isAdmin(Integer roleId) {
+        return roleId != null && 1 == roleId;
+    }
 }

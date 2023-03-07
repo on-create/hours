@@ -4,7 +4,7 @@ import com.example.hours.common.Result;
 import com.example.hours.common.validator.group.AddGroup;
 import com.example.hours.entity.User;
 import com.example.hours.service.UserService;
-import com.example.hours.vo.UserVo;
+import com.example.hours.model.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

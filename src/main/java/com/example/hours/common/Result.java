@@ -96,6 +96,17 @@ public class Result<T> {
     }
 
     /**
+     * 操作中止
+     */
+    public static <T> Result<T> warn() {
+        return warn(ResultCodeEnum.WARN.getMessage());
+    }
+
+    public static <T> Result<T> warn(String message) {
+        return new Result<>(ResultCodeEnum.WARN.getCode(), message, null);
+    }
+
+    /**
      * 参数验证失败
      * @param errorMap 参数验证失败信息集合
      * @return 验证失败信息结果

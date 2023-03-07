@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,12 +31,12 @@ public class LoginUser implements UserDetails {
     /**
      * 权限list
      */
-    private List<String> permissions;
+    private Set<String> permissions;
 
     @JSONField(serialize = false)
     private List<SimpleGrantedAuthority> authorities;
 
-    public LoginUser(User user, List<String> permissions) {
+    public LoginUser(User user, Set<String> permissions) {
         this.user = user;
         this.permissions = permissions;
     }

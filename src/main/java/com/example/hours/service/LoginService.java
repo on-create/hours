@@ -1,6 +1,6 @@
 package com.example.hours.service;
 
-import com.example.hours.vo.LoginUserVo;
+import com.example.hours.model.vo.LoginUserVo;
 
 import java.util.Map;
 

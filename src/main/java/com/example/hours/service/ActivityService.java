@@ -2,8 +2,8 @@ package com.example.hours.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.hours.entity.Activity;
-import com.example.hours.utils.page.PageUtils;
-import com.example.hours.vo.ActivityVo;
+import com.example.hours.utils.page.PageResult;
+import com.example.hours.model.vo.ActivityVo;
 
 import java.util.Map;
 
@@ -15,7 +15,7 @@ public interface ActivityService extends IService<Activity> {
 
     void updateActivity(Activity activity);
 
-    PageUtils getActivityListByStatus(Map<String, Object> params);
+    PageResult getActivityListByStatus(Map<String, Object> params);
 
     ActivityVo getActivityVo(Integer id);
 
@@ -23,5 +23,5 @@ public interface ActivityService extends IService<Activity> {
 
     void updateDraft(Activity activity);
 
-    PageUtils getMyActivityList(Map<String, Object> params);
+    PageResult getMyActivityList(Map<String, Object> params);
 }

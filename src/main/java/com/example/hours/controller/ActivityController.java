@@ -6,8 +6,8 @@ import com.example.hours.common.validator.group.TemporaryGroup;
 import com.example.hours.common.validator.group.UpdateGroup;
 import com.example.hours.entity.Activity;
 import com.example.hours.service.ActivityService;
-import com.example.hours.utils.page.PageUtils;
-import com.example.hours.vo.ActivityVo;
+import com.example.hours.utils.page.PageResult;
+import com.example.hours.model.vo.ActivityVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,21 +29,21 @@ public class ActivityController {
 
     /**
      * 活动列表（根据 status 区分草稿、待审批，审批通过）
-     * @return {@link Result<PageUtils>}
+     * @return {@link Result<PageResult>}
      */
     @GetMapping("/list")
-    public Result<PageUtils> getActivityList(@RequestParam Map<String, Object> params) {
-        PageUtils page = activityService.getActivityListByStatus(params);
+    public Result<PageResult> getActivityList(@RequestParam Map<String, Object> params) {
+        PageResult page = activityService.getActivityListByStatus(params);
         return Result.success(page);
     }
 
     /**
      * 我的活动列表
-     * @return {@link Result<PageUtils>}
+     * @return {@link Result<PageResult>}
      */
     @GetMapping("/myList")
-    public Result<PageUtils> getMyActivityList(@RequestParam Map<String, Object> params) {
-        PageUtils page = activityService.getMyActivityList(params);
+    public Result<PageResult> getMyActivityList(@RequestParam Map<String, Object> params) {
+        PageResult page = activityService.getMyActivityList(params);
         return Result.success(page);
     }
 

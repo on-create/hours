@@ -8,7 +8,7 @@
         SELECT
             id
         FROM
-            `user`
+            `sys_user`
         WHERE
             email = #{email}
     </select>

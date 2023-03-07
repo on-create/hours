@@ -1,9 +1,9 @@
 package com.example.hours.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.hours.bo.ResourceRoleBO;
+import com.example.hours.model.bo.ResourceRoleBO;
 import com.example.hours.entity.Resource;
-import com.example.hours.vo.RoleVO;
+import com.example.hours.model.vo.RoleVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

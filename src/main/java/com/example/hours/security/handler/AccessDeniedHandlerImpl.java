@@ -1,4 +1,4 @@
-package com.example.hours.handler;
+package com.example.hours.security.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.example.hours.common.Result;
@@ -22,7 +22,6 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         Result<Object> failedResult = Result.failed(ResultCodeEnum.FORBIDDEN);
         String s = JSON.toJSONString(failedResult);
-        System.out.println(s);
         WebUtils.renderString(response, s);
     }
 }

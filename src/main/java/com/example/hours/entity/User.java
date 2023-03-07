@@ -3,7 +3,6 @@ package com.example.hours.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import com.example.hours.common.validator.group.AddGroup;
-import com.example.hours.common.validator.group.TemporaryGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@TableName("user")
+@TableName("sys_user")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -95,4 +94,12 @@ public class User implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @Null(message = "不能指定更新时间", groups = {AddGroup.class})
     private LocalDateTime updateTime;
+
+    public boolean isAdmin() {
+        return isAdmin(this.id);
+    }
+
+    public static boolean isAdmin(Integer userId) {
+        return userId != null && 1 == userId;
+    }
 }

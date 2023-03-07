@@ -15,6 +15,15 @@ public class HolderUserUtils {
     }
 
     /**
+     * 获取当前登录用户名称
+     * @return 用户名称
+     */
+    // TODO 改为用户名称
+    public static String getLoginUserName() {
+        return getLoginUser().getUser().getNickname();
+    }
+
+    /**
      * 获取当前登录用户
      * @return 用户
      */
