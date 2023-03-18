@@ -1,16 +1,18 @@
 package com.example.hours.controller.system;
 
 import com.example.hours.common.Result;
-import com.example.hours.entity.Role;
-import com.example.hours.service.RoleService;
+import com.example.hours.entity.sys.SysRole;
+import com.example.hours.entity.sys.SysUser;
+import com.example.hours.entity.sys.UserRole;
+import com.example.hours.model.pagination.RolePage;
+import com.example.hours.service.sys.RoleService;
+import com.example.hours.service.sys.UserService;
 import com.example.hours.utils.page.PageParams;
 import com.example.hours.utils.page.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,206 +26,173 @@ public class SysRoleController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private UserService userService;
+
     @PreAuthorize("@perms.hasPermission('system:role:list')")
     @GetMapping("/list")
-    public Result<PageResult> list(@RequestBody Role role, @RequestBody PageParams params) {
-        PageResult page = roleService.selectRoleList(role, params);
+    public Result<PageResult> list(RolePage rolePage) {
+        // TODO 待删除
+        System.out.println(rolePage.toString());
+        PageParams pageParams = new PageParams(rolePage.getCurrPage(), rolePage.getLimit());
+        SysRole sysRole = SysRole.builder()
+                .id(rolePage.getRoleId())
+                .roleName(rolePage.getRoleName())
+                .roleKey(rolePage.getRoleKey())
+                .status(rolePage.getRoleStatus())
+                .build();
+        PageResult page = roleService.selectRoleList(sysRole, pageParams);
         return Result.success(page);
     }
 
-    /*@Log(title = "角色管理", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermi('system:role:export')")
+    /*@PreAuthorize("@perms.hasPermission('system:role:export')")
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SysRole role)
-    {
+    public void export(HttpServletResponse response, SysRole role) {
         List<SysRole> list = roleService.selectRoleList(role);
         ExcelUtil<SysRole> util = new ExcelUtil<SysRole>(SysRole.class);
         util.exportExcel(response, list, "角色数据");
-    }
-
-    *//**
-     * 根据角色编号获取详细信息
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:query')")
-    @GetMapping(value = "/{roleId}")
-    public AjaxResult getInfo(@PathVariable Long roleId)
-    {
-        roleService.checkRoleDataScope(roleId);
-        return success(roleService.selectRoleById(roleId));
-    }
-
-    *//**
-     * 新增角色
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:add')")
-    @Log(title = "角色管理", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@Validated @RequestBody SysRole role)
-    {
-        if (!roleService.checkRoleNameUnique(role))
-        {
-            return error("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
-        }
-        else if (!roleService.checkRoleKeyUnique(role))
-        {
-            return error("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
-        }
-        role.setCreateBy(getUsername());
-        return toAjax(roleService.insertRole(role));
-
-    }
-
-    *//**
-     * 修改保存角色
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
-    @Log(title = "角色管理", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@Validated @RequestBody SysRole role)
-    {
-        roleService.checkRoleAllowed(role);
-        roleService.checkRoleDataScope(role.getRoleId());
-        if (!roleService.checkRoleNameUnique(role))
-        {
-            return error("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
-        }
-        else if (!roleService.checkRoleKeyUnique(role))
-        {
-            return error("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
-        }
-        role.setUpdateBy(getUsername());
-
-        if (roleService.updateRole(role) > 0)
-        {
-            // 更新缓存用户权限
-            LoginUser loginUser = getLoginUser();
-            if (StringUtils.isNotNull(loginUser.getUser()) && !loginUser.getUser().isAdmin())
-            {
-                loginUser.setPermissions(permissionService.getMenuPermission(loginUser.getUser()));
-                loginUser.setUser(userService.selectUserByUserName(loginUser.getUser().getUserName()));
-                tokenService.setLoginUser(loginUser);
-            }
-            return success();
-        }
-        return error("修改角色'" + role.getRoleName() + "'失败，请联系管理员");
-    }
-
-    *//**
-     * 修改保存数据权限
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
-    @Log(title = "角色管理", businessType = BusinessType.UPDATE)
-    @PutMapping("/dataScope")
-    public AjaxResult dataScope(@RequestBody SysRole role)
-    {
-        roleService.checkRoleAllowed(role);
-        roleService.checkRoleDataScope(role.getRoleId());
-        return toAjax(roleService.authDataScope(role));
-    }
-
-    *//**
-     * 状态修改
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
-    @Log(title = "角色管理", businessType = BusinessType.UPDATE)
-    @PutMapping("/changeStatus")
-    public AjaxResult changeStatus(@RequestBody SysRole role)
-    {
-        roleService.checkRoleAllowed(role);
-        roleService.checkRoleDataScope(role.getRoleId());
-        role.setUpdateBy(getUsername());
-        return toAjax(roleService.updateRoleStatus(role));
-    }
-
-    *//**
-     * 删除角色
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:remove')")
-    @Log(title = "角色管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{roleIds}")
-    public AjaxResult remove(@PathVariable Long[] roleIds)
-    {
-        return toAjax(roleService.deleteRoleByIds(roleIds));
-    }
-
-    *//**
-     * 获取角色选择框列表
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:query')")
-    @GetMapping("/optionselect")
-    public AjaxResult optionselect()
-    {
-        return success(roleService.selectRoleAll());
-    }
-
-    *//**
-     * 查询已分配用户角色列表
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:list')")
-    @GetMapping("/authUser/allocatedList")
-    public TableDataInfo allocatedList(SysUser user)
-    {
-        startPage();
-        List<SysUser> list = userService.selectAllocatedList(user);
-        return getDataTable(list);
-    }
-
-    *//**
-     * 查询未分配用户角色列表
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:list')")
-    @GetMapping("/authUser/unallocatedList")
-    public TableDataInfo unallocatedList(SysUser user)
-    {
-        startPage();
-        List<SysUser> list = userService.selectUnallocatedList(user);
-        return getDataTable(list);
-    }
-
-    *//**
-     * 取消授权用户
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
-    @Log(title = "角色管理", businessType = BusinessType.GRANT)
-    @PutMapping("/authUser/cancel")
-    public AjaxResult cancelAuthUser(@RequestBody SysUserRole userRole)
-    {
-        return toAjax(roleService.deleteAuthUser(userRole));
-    }
-
-    *//**
-     * 批量取消授权用户
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
-    @Log(title = "角色管理", businessType = BusinessType.GRANT)
-    @PutMapping("/authUser/cancelAll")
-    public AjaxResult cancelAuthUserAll(Long roleId, Long[] userIds)
-    {
-        return toAjax(roleService.deleteAuthUsers(roleId, userIds));
-    }
-
-    *//**
-     * 批量选择用户授权
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:edit')")
-    @Log(title = "角色管理", businessType = BusinessType.GRANT)
-    @PutMapping("/authUser/selectAll")
-    public AjaxResult selectAuthUserAll(Long roleId, Long[] userIds)
-    {
-        roleService.checkRoleDataScope(roleId);
-        return toAjax(roleService.insertAuthUsers(roleId, userIds));
-    }
-
-    *//**
-     * 获取对应角色部门树列表
-     *//*
-    @PreAuthorize("@ss.hasPermi('system:role:query')")
-    @GetMapping(value = "/deptTree/{roleId}")
-    public AjaxResult deptTree(@PathVariable("roleId") Long roleId)
-    {
-        AjaxResult ajax = AjaxResult.success();
-        ajax.put("checkedKeys", deptService.selectDeptListByRoleId(roleId));
-        ajax.put("depts", deptService.selectDeptTreeList(new SysDept()));
-        return ajax;
     }*/
+
+    /**
+     * 根据角色编号获取详细信息
+     * @param roleId 角色ID
+     * @return 角色详细信息
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:query')")
+    @GetMapping(value = "/{roleId}")
+    public Result<SysRole> getInfo(@PathVariable Integer roleId) {
+        roleService.checkRoleDataScope(roleId);
+        SysRole sysRole = roleService.selectRoleById(roleId);
+        return Result.success(sysRole);
+    }
+
+    /**
+     * 新增角色
+     * @param sysRole 角色信息
+     * @return {@link Result<>}
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:add')")
+    @PostMapping("/add")
+    public Result<?> add(@Validated @RequestBody SysRole sysRole) {
+        roleService.insertRole(sysRole);
+        return Result.success();
+
+    }
+
+    /**
+     * 修改角色信息
+     * @param sysRole 角色信息
+     * @return {@link Result<>}
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:edit')")
+    @PostMapping("/update")
+    public Result<?> edit(@Validated @RequestBody SysRole sysRole) {
+        roleService.updateRole(sysRole);
+        return Result.success();
+    }
+
+    /**
+     * 修改保存数据权限
+     * @param sysRole 角色信息
+     * @return {@link Result<>}
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:edit')")
+    @PostMapping("/dataScope")
+    public Result<?> updateDataScope(@RequestBody SysRole sysRole) {
+        roleService.updateAuthDataScope(sysRole);
+        return Result.success();
+    }
+
+    /**
+     * 状态修改
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:edit')")
+    @PostMapping("/changeStatus")
+    public Result<?> changeStatus(@RequestBody SysRole sysRole) {
+        roleService.updateRoleStatus(sysRole);
+        return Result.success();
+    }
+
+    /**
+     * 删除角色
+     * @param roleIds 角色id列表
+     * @return {@link Result<>}
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:remove')")
+    @PostMapping("/remove")
+    public Result<?> remove(@RequestParam List<Integer> roleIds) {
+        roleService.deleteRoleByIds(roleIds);
+        return Result.success();
+    }
+
+    /**
+     * 获取角色选择框列表
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:query')")
+    @GetMapping("/option_select")
+    public Result<List<SysRole>> optionSelect() {
+        List<SysRole> sysRoles = roleService.selectRolesAll();
+        return Result.success(sysRoles);
+    }
+
+    /**
+     * 查询已分配用户角色列表
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:list')")
+    @GetMapping("/authUser/allocatedList")
+    public Result<PageResult> allocatedList(@RequestBody SysUser sysUser, @RequestBody PageParams params) {
+        PageResult result = userService.selectAllocatedList(params, sysUser);
+        return Result.success(result);
+    }
+
+    /**
+     * 查询未分配用户角色列表
+     * @param sysUser 用户信息
+     * @param params 分页信息
+     * @return
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:list')")
+    @GetMapping("/authUser/unallocatedList")
+    public Result<PageResult> unallocatedList(@RequestBody SysUser sysUser, @RequestBody PageParams params) {
+        PageResult result = userService.selectUnallocatedList(params, sysUser);
+        return Result.success(result);
+    }
+
+    /**
+     * 取消授权用户
+     * @param userRole 用户与角色关联信息
+     * @return {@link Result<>}
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:edit')")
+    @PostMapping("/authUser/cancel")
+    public Result<?> cancelAuthUser(@RequestBody UserRole userRole) {
+        roleService.deleteAuthUser(userRole);
+        return Result.success();
+    }
+
+    /**
+     * 批量取消授权用户
+     * @param roleId 角色id
+     * @param userIds 用户id列表
+     * @return {@link Result<>}
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:edit')")
+    @PostMapping("/authUser/cancelAll")
+    public Result<?> cancelAuthUserAll(@RequestParam("roleId") Integer roleId, @RequestParam("userIds") List<Integer> userIds) {
+        roleService.deleteAuthUsers(roleId, userIds);
+        return Result.success();
+    }
+
+    /**
+     * 批量选择用户授权
+     * @param roleId 角色id
+     * @param userIds 用户id列表
+     * @return {@link Result<>}
+     */
+    @PreAuthorize("@perms.hasPermission('system:role:edit')")
+    @PostMapping("/authUser/selectAll")
+    public Result<?> selectAuthUserAll(@RequestParam("roleId") Integer roleId, @RequestParam("userIds") List<Integer> userIds) {
+        roleService.insertAuthUsers(roleId, userIds);
+        return Result.success();
+    }
 }

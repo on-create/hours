@@ -1,10 +1,11 @@
 package com.example.hours.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.hours.domain.TreeSelect;
-import com.example.hours.entity.Menu;
+import com.example.hours.model.TreeSelect;
+import com.example.hours.entity.sys.Menu;
 
 import java.util.List;
+import java.util.Set;
 
 public interface MenuService extends IService<Menu> {
 
@@ -75,4 +76,27 @@ public interface MenuService extends IService<Menu> {
      * @param menuId 菜单id
      */
     void deleteMenuById(Integer menuId);
+
+    /**
+     * 根据角色ID查询权限
+     * @param roleId 角色ID
+     * @return 权限列表
+     */
+    Set<String> selectMenuPermsByRoleId(Integer roleId);
+
+    /**
+     * 根据用户ID查询权限
+     * @param userId 用户ID
+     * @return 权限列表
+     */
+    Set<String> selectMenuPermsByUserId(Integer userId);
+
+    /**
+     * 根据用户ID查询菜单
+     * @param userId 用户名称
+     * @return 菜单列表
+     */
+    List<Menu> selectMenuTreeByUserId(Integer userId);
+
+    //List<RouterVO> buildMenus(List<Menu> );
 }

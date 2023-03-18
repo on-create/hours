@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginUserVo {
+public class LoginUserVO {
 
     /**
      * 用户名

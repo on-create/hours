@@ -26,12 +26,12 @@
         FROM
             sys_resource resource
                 LEFT JOIN sys_resource_role resource_role ON resource.id = resource_role.resource_id
-                LEFT JOIN sys_role role ON resource_role.role_id = role.id
+                LEFT JOIN sys_role sysRole ON resource_role.role_id = sysRole.id
         WHERE
             parent_id > 0
             AND (
                 is_anonymous = 1
-                OR ( resource.status = 0 AND resource.del_flag = 0 AND role.status = 0 AND role.del_flag = 0 )
+                OR ( resource.status = 0 AND resource.del_flag = 0 AND sysRole.status = 0 AND sysRole.del_flag = 0 )
             )
     </select>
 

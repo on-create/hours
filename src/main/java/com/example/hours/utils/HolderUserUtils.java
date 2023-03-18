@@ -1,8 +1,9 @@
 package com.example.hours.utils;
 
-import com.example.hours.entity.LoginUser;
+import com.example.hours.entity.sys.LoginUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class HolderUserUtils {
 
@@ -11,16 +12,15 @@ public class HolderUserUtils {
      * @return 用户id
      */
     public static Integer getLoginUserId() {
-        return getLoginUser().getUser().getId();
+        return getLoginUser().getSysUser().getId();
     }
 
     /**
      * 获取当前登录用户名称
      * @return 用户名称
      */
-    // TODO 改为用户名称
     public static String getLoginUserName() {
-        return getLoginUser().getUser().getNickname();
+        return getLoginUser().getSysUser().getUsername();
     }
 
     /**
@@ -29,6 +29,36 @@ public class HolderUserUtils {
      */
     public static LoginUser getLoginUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return  (LoginUser) authentication.getPrincipal();
+        return (LoginUser) authentication.getPrincipal();
+    }
+
+    /**
+     * 生成BCryptPasswordEncoder密码
+     * @param password 密码
+     * @return 加密字符串
+     */
+    public static String encryptPassword(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.encode(password);
+    }
+
+    /**
+     * 判断密码是否相同
+     * @param rawPassword 真实密码
+     * @param encodedPassword 加密后字符
+     * @return 结果
+     */
+    public static boolean matchesPassword(String rawPassword, String encodedPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+
+    /**
+     * 是否位管理员
+     * @param userId 用户id
+     * @return 结果
+     */
+    public static boolean isAdmin(Integer userId) {
+        return userId != null && userId == 1;
     }
 }

@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -23,22 +22,19 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class LoginUser implements UserDetails {
 
-    /**
-     * 用户
-     */
     private User user;
 
     /**
-     * 权限list
+     * 角色集合
      */
-    private Set<String> permissions;
+    private Set<String> roles;
 
     @JSONField(serialize = false)
     private List<SimpleGrantedAuthority> authorities;
 
-    public LoginUser(User user, Set<String> permissions) {
+    public LoginUser(User user, Set<String> roles) {
         this.user = user;
-        this.permissions = permissions;
+        this.roles = roles;
     }
 
     @Override
@@ -47,7 +43,7 @@ public class LoginUser implements UserDetails {
             return this.authorities;
         }
 
-        authorities = this.permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        authorities = this.roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         return authorities;
     }
 
@@ -58,7 +54,7 @@ public class LoginUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.user.getNickname();
+        return this.user.getUsername();
     }
 
     /**

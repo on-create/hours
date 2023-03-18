@@ -1,92 +1,51 @@
 package com.example.hours.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Set;
-
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@TableName("sys_role")
-public class Role extends BaseEntity implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+@TableName("role")
+public class Role extends BaseEntity {
 
     /**
-     * id
+     * 角色ID
+     * @mock 1
      */
-    @TableId
     private Integer id;
 
     /**
      * 角色名称
+     * @mock 管理员
      */
-    @NotBlank(message = "角色名称不能为空")
-    @Length(max = 30, message = "角色名称长度不能超过30个字符")
-    private String roleName;
+    private String name;
 
     /**
      * 角色权限字符串
+     * @mock admin
      */
-    @NotBlank(message = "权限字符不能为空")
-    @Length(max = 64, message = "权限字符长度不能超过64个字符")
-    private String roleKey;
+    private String key;
 
     /**
-     * 角色排序
+     * 显示顺序
+     * @mock 1
      */
-    @NotNull(message = "显示顺序不能为空")
-    private Integer roleSort;
+    private Integer sort;
 
     /**
-     * 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限）
+     * 角色状态（0正常 1停用）
+     * @mock 0
      */
-    private String dataScope;
+    private String status;
 
     /**
-     * 菜单树选择项是否关联显示（ 0：父子不互相关联显示 1：父子互相关联显示）
-     */
-    private boolean menuCheckStrictly;
-
-    /**
-     * 角色状态（0 正常， 1 停用）
-     */
-    private Integer status;
-
-    /**
-     * 删除标记（0未删除，1已删除）
+     * 删除标记（0未删除 1已删除）
+     * @mock 0
      */
     @TableLogic(value = "0", delval = "1")
     private Integer delFlag;
-
-    /** 用户是否存在此角色标识 默认不存在 */
-    @TableField(exist = false)
-    private boolean flag = false;
-
-    /**
-     * 菜单组
-     */
-    @TableField(exist = false)
-    private Integer[] menuIds;
-
-    /**
-     * 角色菜单权限
-     */
-    @TableField(exist = false)
-    private Set<String> permissions;
-
-    public boolean isAdmin() {
-        return isAdmin(this.id);
-    }
-
-    public static boolean isAdmin(Integer roleId) {
-        return roleId != null && 1 == roleId;
-    }
 }

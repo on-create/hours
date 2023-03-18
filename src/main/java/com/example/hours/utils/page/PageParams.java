@@ -8,12 +8,12 @@ public class PageParams {
     /**
      * 当前页码
      */
-    private Long currPage;
+    private Integer currPage;
 
     /**
      * 每页显示记录数
      */
-    private Long limit;
+    private Integer limit;
 
     /**
      * 排序字段
@@ -24,4 +24,9 @@ public class PageParams {
      * 排序方式
      */
     private String order;
+
+    public PageParams(Integer currPage, Integer limit) {
+        this.currPage = currPage;
+        this.limit = limit;
+    }
 }

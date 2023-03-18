@@ -13,6 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .allowedHeaders("*")
                 .allowedOriginPatterns("*")
-                .allowedMethods("*");
+                .allowedMethods("*")
+                // 缓存1h，默认30min
+                .maxAge(3600);
     }
 }

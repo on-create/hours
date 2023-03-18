@@ -1,8 +1,8 @@
 package com.example.hours.controller.system;
 
 import com.example.hours.common.Result;
-import com.example.hours.domain.TreeSelect;
-import com.example.hours.entity.Menu;
+import com.example.hours.model.TreeSelect;
+import com.example.hours.entity.sys.Menu;
 import com.example.hours.service.MenuService;
 import com.example.hours.utils.HolderUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +65,10 @@ public class SysMenuController {
      * @param roleId 角色id
      * @return 对应角色菜单列表树
      */
+    // TODO bug
     @GetMapping(value = "/roleMenuTreeselect/{roleId}")
     public Result<Map<String, Object>> roleMenuTreeselect(@PathVariable("roleId") Integer roleId) {
+        System.out.println(roleId);
         List<Menu> menus = menuService.selectMenuList(HolderUserUtils.getLoginUserId());
         Map<String, Object> data = new HashMap<>();
         data.put("checkedKeys", menuService.selectMenuListByRoleId(roleId));
@@ -104,8 +106,8 @@ public class SysMenuController {
      * @return {@link Result<>}
      */
     @PreAuthorize("@perms.hasPermission('system:menu:remove')")
-    @PostMapping("/delete")
-    public Result<?> remove(@RequestParam("menuId") Integer menuId) {
+    @DeleteMapping("/{menuId}")
+    public Result<?> remove(@PathVariable("menuId") Integer menuId) {
         menuService.deleteMenuById(menuId);
         return Result.success();
     }

@@ -10,16 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@TableName("sys_role_menu")
-public class RoleMenu {
+@TableName("user_role")
+public class UserRole {
 
     /**
-     * 角色id
+     * 用户ID
+     * @mock 1
+     */
+    private Integer userId;
+
+    /**
+     * 角色ID
+     * @mock 1
      */
     private Integer roleId;
-
-    /**
-     * 菜单id
-     */
-    private Integer menuId;
 }

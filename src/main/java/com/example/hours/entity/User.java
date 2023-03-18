@@ -1,105 +1,58 @@
 package com.example.hours.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.annotation.*;
-import com.example.hours.common.validator.group.AddGroup;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Null;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.*;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@TableName("sys_user")
-public class User implements Serializable {
+@TableName("user")
+public class User extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
-
-    @TableId
-    @Null(message = "不能指定id", groups = {AddGroup.class})
+    /**
+     * 用户ID
+     * @mock 1
+     */
     private Integer id;
 
     /**
-     * 昵称
+     * 用户名称
+     * @mock admin
      */
-    @NotBlank(message = "昵称不能为空", groups = {AddGroup.class})
-    private String nickname;
+    private String username;
 
     /**
-     * 密码
+     * 用户密码
+     * @mock 123456
      */
-    @NotBlank(message = "密码不能为空", groups = {AddGroup.class})
     private String password;
 
     /**
-     * 手机号
-     */
-    private String mobile;
-
-    /**
-     * 个性签名
-     */
-    private String sign;
-
-    /**
      * 邮箱
+     * @mock 2640647225@qq.com
      */
-    @NotBlank(message = "邮箱不能为空", groups = {AddGroup.class})
-    @Email(message = "邮箱格式错误", groups = {AddGroup.class})
     private String email;
 
     /**
-     * 头像
+     * 电话号码
+     * @mock 17779695831
      */
-    private String header;
+    private String phone;
 
     /**
-     * 性别
+     * 性别（0男 1女 2未知）
+     * @mock 0
      */
-    private Integer gender;
+    private String sex;
 
     /**
-     * 活动申请权限
-     */
-    @Null(message = "不能指定申请权限", groups = {AddGroup.class})
-    private Integer authority;
-
-    /**
-     * 删除标志
+     * 删除标记（0未删除 1已删除）
+     * @mock 0
      */
     @TableLogic(value = "0", delval = "1")
-    @Null(message = "不能指定状态", groups = {AddGroup.class})
     private Integer delFlag;
 
-    /**
-     * 创建时间
-     */
-    @JSONField(serialize = false)
-    @TableField(fill = FieldFill.INSERT)
-    @Null(message = "不能指定创建时间", groups = {AddGroup.class})
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    @JSONField(serialize = false)
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    @Null(message = "不能指定更新时间", groups = {AddGroup.class})
-    private LocalDateTime updateTime;
-
-    public boolean isAdmin() {
-        return isAdmin(this.id);
-    }
-
-    public static boolean isAdmin(Integer userId) {
-        return userId != null && 1 == userId;
-    }
 }

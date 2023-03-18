@@ -1,4 +1,4 @@
-package com.example.hours.model;
+package com.example.hours.entity.sys;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

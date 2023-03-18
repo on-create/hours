@@ -25,7 +25,7 @@ public class JwtUtils {
     /**
      * 密钥明文
      */
-        public static final String JWT_KEY = "my_hour_system";
+    public static final String JWT_KEY = "my_hour_system";
 
     /**
      * 签发者
@@ -71,8 +71,9 @@ public class JwtUtils {
                 .setSubject(subject)    //主题，可以是JSON数据
                 .setIssuer(JWT_ISSUER)  // 签发者
                 .setIssuedAt(now)   //签发时间
-                .signWith(SignatureAlgorithm.HS256, secretKey)  //使用HS256对称加密算法签名，第二个参数为密钥
-                .setExpiration(expDate);
+                .signWith(SignatureAlgorithm.HS256, secretKey);  //使用HS256对称加密算法签名，第二个参数为密钥
+        //TODO 设置过期时间
+                //.setExpiration(expDate);
     }
 
     /**

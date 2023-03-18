@@ -7,7 +7,7 @@ import com.example.hours.utils.HolderUserUtils;
 import com.example.hours.utils.JwtUtils;
 import com.example.hours.utils.RedisKeyUtils;
 import com.example.hours.utils.RedisUtils;
-import com.example.hours.model.vo.LoginUserVo;
+import com.example.hours.model.vo.LoginUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
     private RedisUtils redisUtils;
 
     @Override
-    public Map<String, Object> login(LoginUserVo user) {
+    public Map<String, Object> login(LoginUserVO user) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -39,6 +39,8 @@ public class LoginServiceImpl implements LoginService {
         }
 
         // 生成 jwt 返回前端
+       /* LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        String userId = loginUser.getSysUser().getId().toString();*/
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         String userId = loginUser.getUser().getId().toString();
         String jwt = JwtUtils.createJWT(userId);

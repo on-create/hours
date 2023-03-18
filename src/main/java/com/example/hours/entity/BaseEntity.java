@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * Entity 基类
+ * entity 基类
  */
 @Data
 public class BaseEntity implements Serializable {
@@ -17,31 +17,18 @@ public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 创建者
-     */
-    private String createBy;
-
-    /**
      * 创建时间
+     * @mock 2023-03-17 23:34:05
      */
     @JSONField(serialize = false)
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /**
-     * 更新者
-     */
-    private String updateBy;
-
-    /**
      * 更新时间
+     * @mock 2023-03-17 23:34:08
      */
     @JSONField(serialize = false)
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateTime;
-
-    /**
-     * 备注
-     */
-    private String remark;
 }

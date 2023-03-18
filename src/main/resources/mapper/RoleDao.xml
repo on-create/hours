@@ -17,7 +17,7 @@
         </foreach>
     </select>
 
-    <resultMap id="RoleResult" type="com.example.hours.entity.Role">
+    <resultMap id="RoleResult" type="com.example.hours.entity.sys.SysRole">
         <id column="id" property="id"/>
         <result column="role_name" property="roleName"/>
         <result column="role_key" property="roleKey"/>
@@ -56,21 +56,26 @@
         where r.id = #{roleId}
     </select>
 
-    <select id="selectRoleList" parameterType="com.example.hours.entity.Role" resultMap="RoleResult">
+    <select id="selectRoleList" parameterType="com.example.hours.entity.sys.SysRole" resultMap="RoleResult">
         <include refid="selectRoleVo"/>
-        where r.del_flag = '0'
-        <if test="role.id != null and role.id != 0">
-            AND r.id = #{role.id}
+        where r.del_flag = 0
+        <if test="sysRole.id != null and sysRole.id != 0">
+            AND r.id = #{sysRole.id}
         </if>
-        <if test="role.roleName != null and role.roleName != ''">
-            AND r.role_name like concat('%', #{role.roleName}, '%')
+        <if test="sysRole.roleName != null and sysRole.roleName != ''">
+            AND r.role_name like concat('%', #{sysRole.roleName}, '%')
         </if>
-        <if test="role.status != null and role.status != ''">
-            AND r.status = #{role.status}
+        <if test="sysRole.status != null and sysRole.status != ''">
+            AND r.status = #{sysRole.status}
         </if>
-        <if test="role.roleKey != null and role.roleKey != ''">
-            AND r.role_key like concat('%', #{role.roleKey}, '%')
+        <if test="sysRole.roleKey != null and sysRole.roleKey != ''">
+            AND r.role_key like concat('%', #{sysRole.roleKey}, '%')
         </if>
         order by r.role_sort
+    </select>
+
+    <select id="selectRolePermissionByUserId" parameterType="integer" resultMap="RoleResult">
+        <include refid="selectRoleVo"/>
+        WHERE r.del_flag = 0 and ur.user_id = #{userId}
     </select>
 </mapper>

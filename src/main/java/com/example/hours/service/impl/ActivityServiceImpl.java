@@ -17,6 +17,7 @@ import com.example.hours.utils.CommonUtils;
 import com.example.hours.utils.page.PageResult;
 import com.example.hours.model.vo.ActivityVo;
 import com.example.hours.model.vo.SimpleActivityVo;
+import com.example.hours.utils.page.Query;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -299,11 +300,11 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
             }
         }
         // TODO 分页修改
-        /*IPage<Activity> page = this.page(
+        IPage<Activity> page = this.page(
                 new Query<Activity>().getPage(params),
                 queryWrapper
-        );*/
-        IPage<Activity> page = null;
+        );
+        //IPage<Activity> page = null;
 
         PageResult pageResult = new PageResult(page);
         List<SimpleActivityVo> simpleActivityVoList = page.getRecords().stream().map(activity -> {

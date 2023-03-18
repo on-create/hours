@@ -1,16 +1,17 @@
 package com.example.hours.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.hours.common.constant.CommonConstant;
 import com.example.hours.dao.MenuDao;
 import com.example.hours.dao.RoleDao;
 import com.example.hours.dao.RoleMenuDao;
-import com.example.hours.domain.TreeSelect;
-import com.example.hours.entity.Menu;
-import com.example.hours.entity.Role;
-import com.example.hours.entity.RoleMenu;
-import com.example.hours.entity.User;
+import com.example.hours.entity.sys.SysRole;
+import com.example.hours.entity.sys.SysUser;
+import com.example.hours.model.TreeSelect;
+import com.example.hours.entity.sys.Menu;
+import com.example.hours.entity.sys.RoleMenu;
 import com.example.hours.exception.HourException;
 import com.example.hours.exception.WarnException;
 import com.example.hours.service.MenuService;
@@ -18,12 +19,7 @@ import com.example.hours.utils.HolderUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("menuService")
@@ -49,7 +45,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     public List<Menu> selectMenuList(Menu menu, Integer userId) {
         List<Menu> menuList;
         // 如果是管理员，则显示所有菜单
-        if (User.isAdmin(userId)) {
+        if (SysUser.isAdmin(userId)) {
             menuList = this.baseMapper.selectMenuList(menu);
         } else {
             menuList = this.baseMapper.selectMenuListByUserId(menu, userId);
@@ -110,8 +106,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
      */
     @Override
     public List<Integer> selectMenuListByRoleId(Integer roleId) {
-        Role role = roleDao.selectRoleById(roleId);
-        return this.baseMapper.selectMenuListByRoleId(roleId, role.isMenuCheckStrictly());
+        SysRole sysRole = roleDao.selectRoleById(roleId);
+        return this.baseMapper.selectMenuListByRoleId(roleId, sysRole.isMenuCheckStrictly());
     }
 
     /**
@@ -182,6 +178,40 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
     }
 
     /**
+     * 根据角色ID查询权限
+     * @param roleId 角色ID
+     * @return 权限列表
+     */
+    @Override
+    public Set<String> selectMenuPermsByRoleId(Integer roleId) {
+        List<String> perms = this.baseMapper.selectMenuPermsByRoleId(roleId);
+        Set<String> permsSet = new HashSet<>();
+        for (String perm : perms) {
+            if (StringUtils.isNotBlank(perm)) {
+                permsSet.addAll(Arrays.asList(perm.trim().split(",")));
+            }
+        }
+        return permsSet;
+    }
+
+    /**
+     * 根据用户ID查询权限
+     * @param userId 用户ID
+     * @return 权限列表
+     */
+    @Override
+    public Set<String> selectMenuPermsByUserId(Integer userId) {
+        List<String> perms = this.baseMapper.selectMenuPermsByUserId(userId);
+        Set<String> permsSet = new HashSet<>();
+        for (String perm : perms) {
+            if (StringUtils.isNotBlank(perm)) {
+                permsSet.addAll(Arrays.asList(perm.trim().split(",")));
+            }
+        }
+        return permsSet;
+    }
+
+    /**
      * 是否存在菜单子节点
      * @param menuId 菜单ID
      * @return 结果
@@ -247,4 +277,91 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements MenuS
                 .count();
         return count > 0;
     }
+
+    /**
+     * 根据用户ID查询菜单
+     * @param userId 用户名称
+     * @return 菜单列表
+     */
+    @Override
+    public List<Menu> selectMenuTreeByUserId(Integer userId) {
+        List<Menu> menus;
+        if (HolderUserUtils.isAdmin(userId)) {
+            menus = this.baseMapper.selectMenuTreeAll();
+        } else {
+            menus = this.baseMapper.selectMenuTreeByUserId(userId);
+        }
+        return getChildPerms(menus);
+    }
+
+    /**
+     * 根据父节点的ID获取所有子节点
+     * @param menuList 分类表
+     * @return String
+     */
+    private List<Menu> getChildPerms(List<Menu> menuList) {
+        List<Menu> res = new ArrayList<>();
+        for (Menu menu : menuList) {
+            if (menu.getParentId() == 0) {
+                recursion(menuList, menu);
+                res.add(menu);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 构建前端路由所需要的菜单
+     * @param menus 菜单列表
+     * @return 路由列表
+     */
+    /*@Override
+    public List<RouterVO> buildMenus(List<Menu> menus) {
+        List<RouterVO> routers = new LinkedList<RouterVO>();
+        for (Menu menu : menus) {
+            RouterVO router = new RouterVO();
+            router.setHidden("1".equals(menu.getVisible()));
+            router.setName(getRouteName(menu));
+            router.setPath(getRouterPath(menu));
+            router.setComponent(getComponent(menu));
+            router.setQuery(menu.getQuery());
+            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
+            List<SysMenu> cMenus = menu.getChildren();
+            if (StringUtils.isNotEmpty(cMenus) && UserConstants.TYPE_DIR.equals(menu.getMenuType()))
+            {
+                router.setAlwaysShow(true);
+                router.setRedirect("noRedirect");
+                router.setChildren(buildMenus(cMenus));
+            }
+            else if (isMenuFrame(menu))
+            {
+                router.setMeta(null);
+                List<RouterVo> childrenList = new ArrayList<RouterVo>();
+                RouterVo children = new RouterVo();
+                children.setPath(menu.getPath());
+                children.setComponent(menu.getComponent());
+                children.setName(StringUtils.capitalize(menu.getPath()));
+                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
+                children.setQuery(menu.getQuery());
+                childrenList.add(children);
+                router.setChildren(childrenList);
+            }
+            else if (menu.getParentId().intValue() == 0 && isInnerLink(menu))
+            {
+                router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
+                router.setPath("/");
+                List<RouterVo> childrenList = new ArrayList<RouterVo>();
+                RouterVo children = new RouterVo();
+                String routerPath = innerLinkReplaceEach(menu.getPath());
+                children.setPath(routerPath);
+                children.setComponent(UserConstants.INNER_LINK);
+                children.setName(StringUtils.capitalize(routerPath));
+                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
+                childrenList.add(children);
+                router.setChildren(childrenList);
+            }
+            routers.add(router);
+        }
+        return routers;
+    }*/
 }

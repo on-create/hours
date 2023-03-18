@@ -1,7 +1,7 @@
 package com.example.hours.security.permission;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.example.hours.entity.LoginUser;
+import com.example.hours.entity.sys.LoginUser;
 import com.example.hours.utils.HolderUserUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Component("perms")
-public class PermissionService {
+public class PermissionComponent {
 
     /**
      * 所有权限标识

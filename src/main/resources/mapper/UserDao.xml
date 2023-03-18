@@ -12,4 +12,96 @@
         WHERE
             email = #{email}
     </select>
+
+    <!--  隔开  -->
+
+    <resultMap id="UserResult" type="com.example.hours.entity.sys.SysUser">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar" property="avatar"/>
+        <result column="password" property="password"/>
+        <result column="status" property="status"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+        <collection property="sysRoles" javaType="java.util.List" resultMap="RoleResult"/>
+    </resultMap>
+
+    <resultMap id="RoleResult" type="com.example.hours.entity.sys.SysRole">
+        <id column="role_id" property="id"/>
+        <result column="role_name" property="roleName"/>
+        <result column="role_key" property="roleKey"/>
+        <result column="role_sort" property="roleSort"/>
+        <result column="data_scope" property="dataScope"/>
+        <result column="role_status" property="status"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select u.id, u.username, u.nickname, u.email, u.avatar, u.phone, u.password, u.sex, u.status, u.del_flag, u.create_by, u.create_time, u.remark,
+               r.id as role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
+        from sys_user u
+                 left join sys_user_role ur on u.id = ur.user_id
+                 left join sys_role r on r.id = ur.role_id
+    </sql>
+
+    <select id="selectUserList" parameterType="com.example.hours.entity.sys.SysUser" resultMap="UserResult">
+        select
+            u.id, u.nickname, u.username, u.email, u.avatar, u.phone, u.sex, u.status, u.del_flag, u.create_by, u.create_time, u.remark
+        from sys_user u
+        where u.del_flag = 0
+        <if test="sysUser.id != null and sysUser.id != 0">
+            AND u.id = #{sysUser.id}
+        </if>
+        <if test="sysUser.username != null and sysUser.username != ''">
+            AND u.username like concat('%', #{sysUser.username}, '%')
+        </if>
+        <if test="sysUser.status != null and sysUser.status != ''">
+            AND u.status = #{sysUser.status}
+        </if>
+        <if test="sysUser.phone != null and sysUser.phone != ''">
+            AND u.phone like concat('%', #{sysUser.phone}, '%')
+        </if>
+    </select>
+
+    <select id="selectAllocatedList" parameterType="com.example.hours.entity.sys.SysUser" resultMap="UserResult">
+        select distinct
+            u.id, u.username, u.nickname, u.email, u.phone, u.status, u.create_time
+        from sys_user u
+            left join sys_user_role ur on u.id = ur.user_id
+            left join sys_role r on r.id = ur.role_id
+        where u.del_flag = 0 and r.id = #{sysUser.roleId}
+        <if test="sysUser.username != null and sysUser.username != ''">
+            AND u.username like concat('%', #{sysUser.username}, '%')
+        </if>
+        <if test="sysUser.phone != null and sysUser.phone != ''">
+            AND u.phone like concat('%', #{sysUser.phone}, '%')
+        </if>
+    </select>
+
+    <select id="selectUnallocatedList" parameterType="com.example.hours.entity.sys.SysUser" resultMap="UserResult">
+        select distinct
+            u.id, u.username, u.nickname, u.email, u.phone, u.status, u.create_time
+        from sys_user u
+            left join sys_user_role ur on u.id = ur.user_id
+            left join sys_role r on r.id = ur.role_id
+        where u.del_flag = 0 and (r.id != #{sysUser.roleId} or r.id IS NULL)
+            and u.id not in (
+                select u.id
+                from sys_user u
+                    inner join sys_user_role ur on u.id = ur.user_id and ur.role_id = #{roleId}
+            )
+        <if test="sysUser.username != null and sysUser.username != ''">
+            AND u.username like concat('%', #{sysUser.username}, '%')
+        </if>
+        <if test="sysUser.phone != null and sysUser.phone != ''">
+            AND u.phone like concat('%', #{sysUser.phone}, '%')
+        </if>
+    </select>
 </mapper>

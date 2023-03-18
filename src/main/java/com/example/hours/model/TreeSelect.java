@@ -1,8 +1,9 @@
-package com.example.hours.domain;
+package com.example.hours.model;
 
-import com.example.hours.entity.Menu;
+import com.example.hours.entity.sys.Menu;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -39,6 +40,8 @@ public class TreeSelect implements Serializable {
     public TreeSelect(Menu menu) {
         this.id = menu.getId();
         this.label = menu.getName();
-        this.children = menu.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(menu.getChildren())) {
+            this.children = menu.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
+        }
     }
 }
