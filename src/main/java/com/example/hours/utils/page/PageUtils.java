@@ -2,6 +2,7 @@ package com.example.hours.utils.page;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.hours.model.pagination.BasePage;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +11,21 @@ import java.util.Objects;
  * 分页工具类
  */
 public class PageUtils {
+
+    public static <T> IPage<T> initPage(BasePage basePage) {
+        // 分页参数
+        long currPage = 1L;
+        long limit = 10L;
+
+        if (Objects.nonNull(basePage.getCurrPage())) {
+            currPage = basePage.getCurrPage();
+        }
+
+        if (Objects.nonNull(basePage.getLimit())) {
+            limit = basePage.getLimit();
+        }
+        return new Page<>(currPage, limit);
+    }
 
     /**
      * 初始化分页

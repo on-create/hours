@@ -1,11 +1,14 @@
 package com.example.hours;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.example.hours.entity.User;
 import com.example.hours.entity.sys.SysRole;
+import com.example.hours.model.pagination.UserPage;
 import com.example.hours.service.RegisterActivityService;
 import com.example.hours.service.sys.RoleService;
 import com.example.hours.utils.CommonUtils;
 import com.example.hours.utils.page.PageResult;
+import com.example.hours.utils.page.PageUtils;
 import com.example.hours.utils.page.Query;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +71,13 @@ class HoursApplicationTests {
                 new Query<SysRole>().getPage(new HashMap<>())
         );
         System.out.println(new PageResult(page));
+    }
+
+    @Test
+    public void testPageUtils() {
+        UserPage userPage = new UserPage();
+        userPage.setCurrPage(1);
+        userPage.setLimit(10);
+        IPage<User> userIPage = PageUtils.initPage(userPage);
     }
 }

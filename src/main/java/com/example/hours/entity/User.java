@@ -1,5 +1,7 @@
 package com.example.hours.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
@@ -53,6 +55,12 @@ public class User extends BaseEntity {
      * @mock 0
      */
     @TableLogic(value = "0", delval = "1")
+    @JSONField(serialize = false)
     private Integer delFlag;
 
+    /**
+     * 角色ID
+     */
+    @TableField(exist = false)
+    private Integer roleId;
 }

@@ -1,8 +1,8 @@
 package com.example.hours.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
  * entity 基类
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -20,7 +21,6 @@ public class BaseEntity implements Serializable {
      * 创建时间
      * @mock 2023-03-17 23:34:05
      */
-    @JSONField(serialize = false)
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
@@ -28,7 +28,6 @@ public class BaseEntity implements Serializable {
      * 更新时间
      * @mock 2023-03-17 23:34:08
      */
-    @JSONField(serialize = false)
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateTime;
 }

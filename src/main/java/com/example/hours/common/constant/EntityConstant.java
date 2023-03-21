@@ -77,4 +77,27 @@ public class EntityConstant {
      */
     public static final int RESOURCE_MODULE_ID = 0;
 
+    //- - - - - - - - - - - - - - - - - - - - -  User 常量 - - - - - - - - - - - - - - - - - - - -
+
+    /**
+     * 性别 男
+     */
+    public static final String USER_SEX_MALE = "0";
+
+    /**
+     * 性别 女
+     */
+    public static final String USER_SEX_FEMALE = "1";
+
+    /**
+     * 性别 未知
+     */
+    public static final String USER_SEX_UNKNOWN = "2";
+
+    //- - - - - - - - - - - - - - - - - - - - -  Role 常量 - - - - - - - - - - - - - - - - - - - -
+
+    /**
+     * 管理员ID
+     */
+    public static final Integer ROLE_ADMIN_ID = 1;
 }

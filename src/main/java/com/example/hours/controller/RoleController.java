@@ -1,31 +1,34 @@
 package com.example.hours.controller;
 
 import com.example.hours.common.Result;
-import com.example.hours.service.sys.RoleService;
+import com.example.hours.entity.Role;
+import com.example.hours.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
  * 角色控制类
  */
-//@RestController
-//@RequestMapping("/role")
+@RestController
+@RequestMapping("/role")
 public class RoleController {
 
     @Autowired
     private RoleService roleService;
 
     /**
-     * 查看角色列表
-     * @param status 角色状态（是否被禁用）
+     * 获取角色列表
      * @return {@link Result<List>}
      */
-    /*@GetMapping("/list")
-    public Result<List<RoleVO>> getRoleVOList(@RequestParam("status") Integer status) {
-        List<RoleVO> res = roleService.getRoleVOs(status);
-        return Result.success(res);
-    }*/
+    @GetMapping("/all")
+    public Result<List<Role>> getAllRoles() {
+        List<Role> allRoles = roleService.getAllRoles();
+        return Result.success(allRoles);
+    }
 
     /**
      * 添加角色

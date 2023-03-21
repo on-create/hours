@@ -3,8 +3,11 @@ package com.example.hours.controller;
 import com.example.hours.common.Result;
 import com.example.hours.common.validator.group.AddGroup;
 import com.example.hours.entity.User;
+import com.example.hours.model.bo.UserInfo;
+import com.example.hours.model.pagination.UserPage;
 import com.example.hours.model.vo.UserVo;
 import com.example.hours.service.UserService;
+import com.example.hours.utils.page.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 用户控制类
@@ -29,33 +33,68 @@ public class UserController {
      * @return {@link Result<User>}
      */
     @GetMapping("my_info")
-    @PreAuthorize("permission.hasRole('admin')")
-    public Result<User> getMyInfo() {
-        User user = userService.getMyInfo();
-        return Result.success(user);
+    public Result<UserInfo> getMyInfo() {
+        UserInfo userInfo = userService.getMyInfo();
+        return Result.success(userInfo);
     }
 
+    /**
+     * 根据用户ID获取用户信息
+     * @param userId 用户ID
+     * @return 用户信息
+     */
+    @GetMapping("/info")
+    public Result<UserInfo> getUserInfo(@RequestParam("userId") Integer userId) {
+        UserInfo userInfo = userService.getUserInfoById(userId);
+        return Result.success(userInfo);
+    }
 
     /**
-     * 获取当前用户信息
-     * @return {@link Result<UserVo>}
+     * 分页，批量获取用户信息
+     * @param userPage 请求信息
+     * @return 用户信息
      */
-    /*@GetMapping("/info")
-    public Result<UserVo> getUserVo() {
-        UserVo userVo = userService.getUserVo();
-        return Result.success(userVo);
-    }*/
+    @GetMapping("/list")
+    @PreAuthorize("@permission.hasRole('admin')")
+    public Result<PageResult> getUserList(UserPage userPage) {
+        PageResult result = userService.getUserInfos(userPage);
+        return Result.success(result);
+    }
 
     /**
-     * 更新当前用户信息
-     * @param sysUser 当前用户更新的信息
-     * @return {@link Result<>}
+     * 添加用户
+     * @param user 用户信息
+     * @return {@link Result}
      */
-    /*@PostMapping("/update")
-    public Result<Object> updateUser(@RequestBody SysUser sysUser) {
-        userService.updateUserInfo(sysUser);
+    @PostMapping("/add")
+    @PreAuthorize("@permission.hasRole('admin')")
+    public Result<?> addUser(@RequestBody User user) {
+        userService.insertUser(user);
         return Result.success();
-    }*/
+    }
+
+    /**
+     * 更新用户信息
+     * @param user 最新信息
+     * @return {@link Result}
+     */
+    @PostMapping("/update")
+    public Result<?> updateUser(@RequestBody User user) {
+        userService.updateUser(user);
+        return Result.success();
+    }
+
+    /**
+     * 删除用户信息
+     * @param userIds 用户id列表
+     * @return {@link Result}
+     */
+    @PostMapping("/delete")
+    @PreAuthorize("@permission.hasRole('admin')")
+    public Result<?> deleteUser(@RequestBody List<Integer> userIds) {
+        userService.deleteUser(userIds);
+        return Result.success();
+    }
 
     /**
      * 用户注册
