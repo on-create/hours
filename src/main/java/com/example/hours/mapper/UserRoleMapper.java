@@ -1,6 +1,7 @@
 package com.example.hours.mapper;
 
 import com.example.hours.entity.UserRole;
+import com.example.hours.model.vo.AuthUserVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -40,4 +41,26 @@ public interface UserRoleMapper {
      * @param userIds 用户id列表
      */
     void deleteBatchUserIds(@Param("userIds") List<Integer> userIds);
+
+    /**
+     * 根据角色ID获取关联的用户数量
+     * @param roleId 角色ID
+     * @return 用户数量
+     */
+    int selectCountByRoleId(@Param("roleId") Integer roleId);
+
+    /**
+     * 根据角色ID获取关联的角色ID（分页）
+     * @param roleId 角色ID
+     * @param skip 跳过条数
+     * @param limit 每页条数
+     * @return 用户ID列表
+     */
+    List<Integer> selectPageByRoleId(@Param("roleId") Integer roleId, @Param("skip") Integer skip, @Param("size") Integer limit);
+
+    /**
+     * 批量更新角色ID
+     * @param authUserVO 授权用户信息
+     */
+    void updateRoleIdByUserIds(@Param("authUserVO") AuthUserVO authUserVO);
 }

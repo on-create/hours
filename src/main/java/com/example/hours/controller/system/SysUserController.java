@@ -36,7 +36,6 @@ public class SysUserController {
         System.out.println(userPage.toString());
         PageParams pageParams = new PageParams(userPage.getCurrPage(), userPage.getLimit());
         SysUser sysUser = SysUser.builder()
-                .id(userPage.getUserId())
                 .username(userPage.getUsername())
                 .phone(userPage.getPhone())
                 .status(userPage.getStatus())

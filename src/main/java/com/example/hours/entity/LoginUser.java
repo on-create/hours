@@ -8,11 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * 登录用户
@@ -25,16 +21,16 @@ public class LoginUser implements UserDetails {
     private User user;
 
     /**
-     * 角色集合
+     * 角色权限字符
      */
-    private Set<String> roles;
+    private String role;
 
     @JSONField(serialize = false)
     private List<SimpleGrantedAuthority> authorities;
 
-    public LoginUser(User user, Set<String> roles) {
+    public LoginUser(User user, String role) {
         this.user = user;
-        this.roles = roles;
+        this.role = role;
     }
 
     @Override
@@ -43,7 +39,10 @@ public class LoginUser implements UserDetails {
             return this.authorities;
         }
 
-        authorities = this.roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(this.role);
+        List<SimpleGrantedAuthority> list = new ArrayList<>();
+        list.add(simpleGrantedAuthority);
+        authorities = list;
         return authorities;
     }
 

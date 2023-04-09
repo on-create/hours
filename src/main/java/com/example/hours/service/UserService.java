@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.hours.entity.User;
 import com.example.hours.model.bo.UserInfo;
 import com.example.hours.model.pagination.UserPage;
+import com.example.hours.model.vo.AuthUserVO;
+import com.example.hours.model.vo.UserPwdVO;
 import com.example.hours.utils.page.PageResult;
 
 import java.util.List;
@@ -53,5 +55,25 @@ public interface UserService extends IService<User> {
      * 删除用户信息
      * @param userIds 用户id列表
      */
-    void deleteUser(List<Integer> userIds);
+    void deleteUsers(List<Integer> userIds);
+
+    /**
+     * 重置用户密码
+     * @param userPwdVO 用户密码信息
+     */
+    void resetPassword(UserPwdVO userPwdVO);
+
+    /**
+     * 根据角色ID查找关联的角色信息分页列表
+     * @param userPage 用户分页信息
+     * @return 用户信息
+     */
+    PageResult selectAllocatedList(UserPage userPage);
+
+    /**
+     * 根据角色ID查找未分配该角色的用户列表
+     * @param userPage 用户分页信息
+     * @return 用户信息
+     */
+    PageResult selectUnallocatedList(UserPage userPage);
 }

@@ -29,4 +29,19 @@
             #{userId}
         </foreach>
     </delete>
+
+    <select id="selectCountByRoleId" parameterType="integer" resultType="integer">
+        SELECT count(*) FROM user_role WHERE role_id = #{roleId}
+    </select>
+
+    <select id="selectPageByRoleId" resultType="integer">
+        SELECT user_id FROM user_role WHERE role_id = #{roleId} LIMIT #{skip}, #{size}
+    </select>
+
+    <update id="updateRoleIdByUserIds">
+        UPDATE user_role SET role_id = #{authUserVO.roleId} WHERE user_id IN
+        <foreach collection="authUserVO.userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </update>
 </mapper>

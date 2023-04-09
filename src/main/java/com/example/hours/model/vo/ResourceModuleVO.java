@@ -34,5 +34,5 @@ public class ResourceModuleVO {
      */
     @Max(value = 1, message = "不能超过最大值1", groups = {UpdateGroup.class})
     @Min(value = 0, message = "不能低于最小值0", groups = {UpdateGroup.class})
-    private Integer status;
+    private String status;
 }

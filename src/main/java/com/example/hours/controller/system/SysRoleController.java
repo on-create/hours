@@ -36,10 +36,9 @@ public class SysRoleController {
         System.out.println(rolePage.toString());
         PageParams pageParams = new PageParams(rolePage.getCurrPage(), rolePage.getLimit());
         SysRole sysRole = SysRole.builder()
-                .id(rolePage.getRoleId())
                 .roleName(rolePage.getRoleName())
                 .roleKey(rolePage.getRoleKey())
-                .status(rolePage.getRoleStatus())
+                .status(rolePage.getStatus())
                 .build();
         PageResult page = roleService.selectRoleList(sysRole, pageParams);
         return Result.success(page);

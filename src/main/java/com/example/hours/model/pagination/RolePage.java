@@ -10,11 +10,6 @@ import lombok.ToString;
 public class RolePage extends BasePage {
 
     /**
-     * 角色ID
-     */
-    private Integer roleId;
-
-    /**
      * 角色名称
      */
     private String roleName;
@@ -27,6 +22,6 @@ public class RolePage extends BasePage {
     /**
      * 启用状态（0启用 1停用）
      */
-    private String roleStatus;
+    private String status;
 
 }

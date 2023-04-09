@@ -11,11 +11,6 @@ import lombok.EqualsAndHashCode;
 public class UserPage extends BasePage {
 
     /**
-     * user ID
-     */
-    private Integer userId;
-
-    /**
      * 用户名
      */
     private String username;
@@ -29,4 +24,9 @@ public class UserPage extends BasePage {
      * 电话号码
      */
     private String phone;
+
+    /**
+     * 角色ID
+     */
+    private Integer roleId;
 }

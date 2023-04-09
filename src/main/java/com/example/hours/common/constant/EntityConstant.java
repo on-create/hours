@@ -17,12 +17,12 @@ public class EntityConstant {
     /**
      * 启用
      */
-    public static final int COMMON_ENABLE = 0;
+    public static final String COMMON_ENABLE = "0";
 
     /**
-     * 禁用
+     * 停用
      */
-    public static final int COMMON_DISABLE = 1;
+    public static final String COMMON_DISABLE = "1";
 
     //- - - - - - - - - - - - - - - - - - - - -  Activity 常量 - - - - - - - - - - - - - - - - - - - -
 
@@ -100,4 +100,9 @@ public class EntityConstant {
      * 管理员ID
      */
     public static final Integer ROLE_ADMIN_ID = 1;
+
+    /**
+     * 普通用户ID
+     */
+    public static final Integer ROLE_COMMON_ID = 2;
 }

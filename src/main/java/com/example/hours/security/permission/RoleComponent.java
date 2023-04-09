@@ -1,5 +1,6 @@
 package com.example.hours.security.permission;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.example.hours.entity.LoginUser;
 import com.example.hours.utils.SecurityUtils;
 import org.springframework.stereotype.Component;
@@ -32,14 +33,14 @@ public class RoleComponent {
      */
     public final boolean hasAnyRole(String... roles) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        if (Objects.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getRoles())) {
+        if (Objects.isNull(loginUser) || StringUtils.isBlank(loginUser.getRole())) {
             return false;
         }
 
-        // 获取当前登录用户的角色列表
-        Set<String> roleSet = loginUser.getRoles();
+        // 获取当前登录用户的角色key
+        String roleKey = loginUser.getRole();
         for (String role : roles) {
-            if (roleSet.contains(ADMIN) || roleSet.contains(role)) {
+            if (ADMIN.equals(roleKey) || roleKey.equals(role)) {
                 return true;
             }
         }

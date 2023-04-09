@@ -5,6 +5,7 @@ import com.example.hours.common.validator.group.AddGroup;
 import com.example.hours.entity.User;
 import com.example.hours.model.bo.UserInfo;
 import com.example.hours.model.pagination.UserPage;
+import com.example.hours.model.vo.UserPwdVO;
 import com.example.hours.model.vo.UserVo;
 import com.example.hours.service.UserService;
 import com.example.hours.utils.page.PageResult;
@@ -91,8 +92,19 @@ public class UserController {
      */
     @PostMapping("/delete")
     @PreAuthorize("@permission.hasRole('admin')")
-    public Result<?> deleteUser(@RequestBody List<Integer> userIds) {
-        userService.deleteUser(userIds);
+    public Result<?> deleteUsers(@RequestBody List<Integer> userIds) {
+        userService.deleteUsers(userIds);
+        return Result.success();
+    }
+
+    /**
+     * 重置用户密码
+     * @param userPwdVO 用户密码信息
+     * @return
+     */
+    @PostMapping("/resetPwd")
+    public Result<?> resetPassword(@RequestBody UserPwdVO userPwdVO) {
+        userService.resetPassword(userPwdVO);
         return Result.success();
     }
 

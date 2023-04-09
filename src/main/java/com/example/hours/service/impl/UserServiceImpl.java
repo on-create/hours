@@ -15,8 +15,9 @@ import com.example.hours.mapper.UserMapper;
 import com.example.hours.mapper.UserRoleMapper;
 import com.example.hours.model.bo.UserInfo;
 import com.example.hours.model.pagination.UserPage;
+import com.example.hours.model.vo.AuthUserVO;
+import com.example.hours.model.vo.UserPwdVO;
 import com.example.hours.service.UserService;
-import com.example.hours.utils.HolderUserUtils;
 import com.example.hours.utils.SecurityUtils;
 import com.example.hours.utils.page.PageResult;
 import com.example.hours.utils.page.PageUtils;
@@ -26,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -73,8 +73,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Role role = roleMapper.selectOne(
                 new LambdaQueryWrapper<Role>()
                         .eq(Role::getId, roleId)
-                        .select(Role::getId, Role::getName)
+                        .select(Role::getId, Role::getStatus)
         );
+        // 判断角色状态，如果关联角色停用，则显示为普通用户
+        if (EntityConstant.COMMON_DISABLE.equals(role.getStatus())) {
+            role.setId(EntityConstant.ROLE_COMMON_ID);
+        }
+
         // 封装 userInfo 对象
         return UserInfo.builder()
                 .userId(userId)
@@ -175,11 +180,64 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     @Transactional
-    public void deleteUser(List<Integer> userIds) {
+    public void deleteUsers(List<Integer> userIds) {
         // 批量删除用户与角色的关联信息
         userRoleMapper.deleteBatchUserIds(userIds);
         // 批量删除用户信息
         this.baseMapper.deleteBatchIds(userIds);
+    }
+
+    /**
+     * 重置用户密码
+     * @param userPwdVO 用户密码信息
+     */
+    @Override
+    public void resetPassword(UserPwdVO userPwdVO) {
+        User user = User.builder()
+                .id(userPwdVO.getUserId())
+                .password(SecurityUtils.encryptPassword(userPwdVO.getPassword()))
+                .build();
+
+        // 管理员给用户重置密码
+        if (isAdmin(SecurityUtils.getUserId())) {
+            this.updateById(user);
+            return;
+        }
+        // TODO 普通用户重置密码
+    }
+
+    /**
+     * 根据角色ID查找关联的角色信息分页列表
+     * @param userPage 用户分页信息
+     * @return 用户信息
+     */
+    @Override
+    public PageResult selectAllocatedList(UserPage userPage) {
+        IPage<User> iPage = PageUtils.initPage(userPage);
+        User user = User.builder()
+                .username(userPage.getUsername())
+                .phone(userPage.getPhone())
+                .roleId(userPage.getRoleId())
+                .build();
+        List<User> users = this.baseMapper.selectAllocatedList(iPage, user);
+        return PageUtils.selectResult(iPage, users);
+    }
+
+    /**
+     * 根据角色ID查找未分配该角色的用户列表
+     * @param userPage 用户分页信息
+     * @return 用户信息
+     */
+    @Override
+    public PageResult selectUnallocatedList(UserPage userPage) {
+        IPage<User> iPage = PageUtils.initPage(userPage);
+        User user = User.builder()
+                .username(userPage.getUsername())
+                .phone(userPage.getPhone())
+                .roleId(userPage.getRoleId())
+                .build();
+        List<User> users = this.baseMapper.selectUnallocatedList(iPage, user);
+        return PageUtils.selectResult(iPage, users);
     }
 
     /**

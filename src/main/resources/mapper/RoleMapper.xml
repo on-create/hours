@@ -9,4 +9,8 @@
             SELECT role_id FROM user_role WHERE user_id = #{userId}
         )
     </select>
+
+    <select id="getRoleKeyById" resultType="java.lang.String">
+        SELECT `key` FROM role WHERE id = #{roleId}
+    </select>
 </mapper>

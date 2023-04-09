@@ -1,5 +1,6 @@
 package com.example.hours.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
@@ -28,6 +29,7 @@ public class Role extends BaseEntity {
      * 角色权限字符串
      * @mock admin
      */
+    @TableField("`key`")
     private String key;
 
     /**
