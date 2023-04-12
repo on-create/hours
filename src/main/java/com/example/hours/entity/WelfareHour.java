@@ -1,53 +1,44 @@
 package com.example.hours.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @TableName("welfare_hour")
-public class WelfareHour implements Serializable {
+public class WelfareHour extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * ID
+     * @mock 1
+     */
     @TableId
     private Integer id;
 
     /**
-     * user id
+     * 用户 id
+     * @mock 1
      */
     private Integer userId;
 
     /**
      * 学时
+     * @mock 1
      */
     private Integer hours;
 
     /**
      * 学年
+     * @mock 2019
      */
-    private String year;
-
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private Date year;
 }

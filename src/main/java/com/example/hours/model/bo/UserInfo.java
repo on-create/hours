@@ -24,6 +24,12 @@ public class UserInfo {
     private String username;
 
     /**
+     * 姓名
+     * @mock 张三
+     */
+    private String name;
+
+    /**
      * 邮箱
      * @mock 2640647225@qq.com
      */

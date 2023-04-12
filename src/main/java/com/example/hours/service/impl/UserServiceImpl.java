@@ -15,7 +15,6 @@ import com.example.hours.mapper.UserMapper;
 import com.example.hours.mapper.UserRoleMapper;
 import com.example.hours.model.bo.UserInfo;
 import com.example.hours.model.pagination.UserPage;
-import com.example.hours.model.vo.AuthUserVO;
 import com.example.hours.model.vo.UserPwdVO;
 import com.example.hours.service.UserService;
 import com.example.hours.utils.SecurityUtils;
@@ -63,7 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 new LambdaQueryWrapper<User>()
                         .eq(User::getId, userId)
                         .select(
-                                User::getUsername, User::getEmail,
+                                User::getUsername, User::getEmail, User::getName,
                                 User::getPhone, User::getSex, User::getCreateTime
                         )
         );
@@ -82,8 +81,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 封装 userInfo 对象
         return UserInfo.builder()
-                .userId(userId)
-                .username(user.getUsername()).email(user.getEmail()).phone(user.getPhone()).sex(user.getSex())
+                .userId(userId).username(user.getUsername()).name(user.getName())
+                .email(user.getEmail()).phone(user.getPhone()).sex(user.getSex())
                 .roleId(role.getId())
                 .build();
     }
