@@ -19,4 +19,10 @@ public class StatusVO {
      * @mock 0
      */
     private String status;
+
+    /**
+     * 多状态
+     * @mock 2
+     */
+    private Integer multiStatus;
 }

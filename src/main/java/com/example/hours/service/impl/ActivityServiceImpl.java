@@ -4,19 +4,26 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.hours.common.Result;
 import com.example.hours.common.constant.CommonConstant;
 import com.example.hours.common.constant.EntityConstant;
 import com.example.hours.common.enums.ZoneEnum;
 import com.example.hours.dao.ActivityDao;
 import com.example.hours.entity.Activity;
 import com.example.hours.exception.DraftException;
+import com.example.hours.exception.HourException;
 import com.example.hours.exception.TimeValidException;
+import com.example.hours.mapper.UserRoleMapper;
+import com.example.hours.model.pagination.ActivityPage;
+import com.example.hours.model.vo.StatusVO;
 import com.example.hours.service.ActivityService;
 import com.example.hours.service.RegisterActivityService;
 import com.example.hours.utils.CommonUtils;
+import com.example.hours.utils.SecurityUtils;
 import com.example.hours.utils.page.PageResult;
 import com.example.hours.model.vo.ActivityVo;
 import com.example.hours.model.vo.SimpleActivityVo;
+import com.example.hours.utils.page.PageUtils;
 import com.example.hours.utils.page.Query;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -27,8 +34,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service("activityService")
@@ -39,6 +48,9 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
 
     @Autowired
     private RegisterActivityService registerActivityService;
+
+    @Autowired
+    private UserRoleMapper userRoleMapper;
 
     /**
      * 保存新增活动 或 草稿添加内容后更新数据
@@ -64,7 +76,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
                 Integer status = draft.getStatus();
                 Integer applicantId = draft.getApplicantId();
                 // TODO 添加用户 id 判断 applicantId == userId
-                boolean flag = (status != null && applicantId != null && status == EntityConstant.ACTIVITY_Draft);
+                boolean flag = (status != null && applicantId != null && status == EntityConstant.ACTIVITY_DRAFT);
                 // 更新草稿
                 if (flag) {
                     LocalDateTime now = LocalDateTime.now(ZoneId.of(ZoneEnum.SHANGHAI.getZone()));
@@ -125,7 +137,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
         }
         applyOrDraft(activity);
         // 设置状态为草稿
-        activity.setStatus(EntityConstant.ACTIVITY_Draft);
+        activity.setStatus(EntityConstant.ACTIVITY_DRAFT);
         this.save(activity);
     }
 
@@ -138,12 +150,28 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
         activity.setNumber(EntityConstant.ACTIVITY_NUMBER_ZERO);
         // 最大报名人数限制，不设置则默认无限制
         if (activity.getMaximum() == null) {
-            activity.setMaximum(EntityConstant.ACTIVITY_NO_MAXIMUM);
+            activity.setMaximum(EntityConstant.ACTIVITY_NUMBER_UNLIMITED);
         }
     }
 
+    /**
+     * 更新活动信息
+     * @param activity 活动信息
+     */
     @Override
     public void updateActivity(Activity activity) {
+        // 获取活动状态信息
+        Integer status = this.baseMapper.selectOne(
+                new LambdaQueryWrapper<Activity>()
+                        .eq(Activity::getId, activity.getId())
+                        .select(Activity::getStatus)
+        ).getStatus();
+
+        // 待审批状态修改为已审批状态，记录审批者ID
+        if (EntityConstant.ACTIVITY_PENDING_APPROVAL == status && EntityConstant.ACTIVITY_APPROVE == activity.getStatus()) {
+            // 设置审批者ID
+            activity.setApproverId(SecurityUtils.getUserId());
+        }
         this.updateById(activity);
     }
 
@@ -167,8 +195,8 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
         if (StringUtils.isNotBlank(statusStr)) {
             int status = Integer.parseInt(statusStr);
             // 草稿
-            if (status == EntityConstant.ACTIVITY_Draft) {
-                queryWrapper.eq(Activity::getStatus, EntityConstant.ACTIVITY_Draft);
+            if (status == EntityConstant.ACTIVITY_DRAFT) {
+                queryWrapper.eq(Activity::getStatus, EntityConstant.ACTIVITY_DRAFT);
             }
 
             // 待审批
@@ -232,7 +260,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
         this.baseMapper.delete(
                 new QueryWrapper<Activity>()
                         .eq("id", id)
-                        .eq("status", EntityConstant.ACTIVITY_Draft)
+                        .eq("status", EntityConstant.ACTIVITY_DRAFT)
         );
     }
 
@@ -254,66 +282,200 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityDao, Activity> impl
         }
     }
 
+    /**
+     * 分页获取活动信息列表
+     * @param activityPage 分页搜索条件
+     * @return 活动信息列表
+     */
     @Override
-    public PageResult getMyActivityList(Map<String, Object> params) {
-        List<Integer> activityIds = registerActivityService.getActivityIds();
-        LambdaQueryWrapper<Activity> queryWrapper = new LambdaQueryWrapper<Activity>().select(
-                Activity::getId,
-                Activity::getNumber,
-                Activity::getMaximum,
-                Activity::getPicture,
-                Activity::getTheme,
-                Activity::getAddress,
-                Activity::getApplyStartTime,
-                Activity::getApplyEndTime,
-                Activity::getActivityStartTime,
-                Activity::getActivityEndTime
-        ).in(Activity::getId, activityIds);
+    public PageResult getActivityList(ActivityPage activityPage) {
+        IPage<Activity> page = this.baseMapper.selectPage(
+                PageUtils.initPage(activityPage),
+                new LambdaQueryWrapper<Activity>()
+                        .like(StringUtils.isNotBlank(activityPage.getTheme()), Activity::getTheme, activityPage.getTheme())
+                        .eq(Objects.nonNull(activityPage.getStatus()), Activity::getStatus, activityPage.getStatus())
+                        .ne(Activity::getStatus, EntityConstant.ACTIVITY_DRAFT)
+                        .select(Activity::getId, Activity::getTheme, Activity::getAddress,
+                                Activity::getStatus, Activity::getSignIn, Activity::getActivityStartTime)
+        );
+        return new PageResult(page);
+    }
 
-        String activityStatusStr = (String) params.get("activityStatus");
-        if (StringUtils.isNotBlank(activityStatusStr)) {
-            // 获取当前格式化时间
-            LocalDateTime nowTime = LocalDateTime.now(ZoneId.of(ZoneEnum.SHANGHAI.getZone()));
-            String now = DateTimeFormatter.ofPattern(dateFormat).format(nowTime);
+    /**
+     * 根据活动id获取活动详细信息
+     * @param activityId 活动id
+     * @return 活动信息
+     */
+    @Override
+    public Activity getActivityDetails(Integer activityId) {
+        return this.baseMapper.selectOne(
+                new LambdaQueryWrapper<Activity>()
+                        .eq(Activity::getId, activityId)
+                        .select(Activity::getId, Activity::getTheme, Activity::getAddress,
+                                Activity::getIntroduction, Activity::getPicture, Activity::getMaximum,
+                                Activity::getReward, Activity::getSignIn, Activity::getSignOut,
+                                Activity::getStatus, Activity::getApplyStartTime, Activity::getApplyEndTime,
+                                Activity::getActivityStartTime, Activity::getActivityEndTime)
+        );
+    }
 
-            int activityStatus = Integer.parseInt(activityStatusStr);
-            // 未开始
-            if (activityStatus == CommonConstant.NOT_STARTED) {
-                queryWrapper.gt(Activity::getActivityStartTime, nowTime);
-            }
+    /**
+     * 添加活动
+     * @param activity 活动信息
+     */
+    @Override
+    public void addActivity(Activity activity) {
+        // 校验时间
+        isValid(activity);
+        // TODO 设置签到
+        Integer userId = SecurityUtils.getUserId();
+        Integer roleId = userRoleMapper.selectRoleId(userId);
+        // 设置申请人id
+        activity.setApplicantId(userId);
+        // 设置活动报名人数
+        activity.setNumber(EntityConstant.ACTIVITY_NUMBER_ZERO);
+        if (EntityConstant.ROLE_APPROVER_ID.equals(roleId) || EntityConstant.ROLE_ADMIN_ID.equals(roleId)) {
+            // 审批者 创建活动
+            activity.setApproverId(userId);
+            activity.setStatus(EntityConstant.ACTIVITY_APPROVE);
+        }
 
-            // 进行中
-            if (activityStatus == CommonConstant.IN_PROGRESS) {
-                queryWrapper.le(Activity::getActivityStartTime, nowTime)
-                        .ge(Activity::getActivityEndTime, nowTime);
-            }
+        if (EntityConstant.ROLE_APPLICANT_ID.equals(roleId)) {
+            // 申请者
+            activity.setStatus(EntityConstant.ACTIVITY_PENDING_APPROVAL);
+            // TODO 设置审批人ID
+        }
 
-            // 已结束
-            if (activityStatus == CommonConstant.HAVE_ENDED) {
-                queryWrapper.lt(Activity::getActivityEndTime, nowTime);
-            }
+        this.save(activity);
+    }
 
-            // 我创建的
-            if (activityStatus == CommonConstant.CREATED_BY_ME) {
-                // TODO 使用当前用户id替换
-                queryWrapper.eq(Activity::getApplicantId, 1);
+    /**
+     * 删除活动
+     * @param activityIds 活动ID列表
+     */
+    @Override
+    public void deleteActivities(List<Integer> activityIds) {
+        for (Integer activityId : activityIds) {
+            // 根据活动id获取活动报名开始/结束时间，活动开始/结束时间，审批状态
+            Activity activity = this.baseMapper.selectOne(
+                    new LambdaQueryWrapper<Activity>()
+                            .eq(Activity::getId, activityId)
+                            .select(Activity::getApplyStartTime, Activity::getActivityStartTime, Activity::getStatus,
+                                    Activity::getApplyEndTime, Activity::getActivityEndTime)
+            );
+
+            // 已审批状态
+            if (activity.getStatus().equals(EntityConstant.ACTIVITY_APPROVE)) {
+                if (CommonUtils.getNowTime().isAfter(activity.getApplyStartTime()) &&
+                        CommonUtils.getNowTime().isBefore(activity.getApplyEndTime())) {
+                    throw new HourException("活动报名期间，禁止删除");
+                }
+
+                if (CommonUtils.getNowTime().isAfter(activity.getActivityStartTime()) &&
+                        CommonUtils.getNowTime().isBefore(activity.getActivityEndTime())) {
+                    throw new HourException("活动进行期间，禁止删除");
+                }
             }
         }
-        // TODO 分页修改
-        IPage<Activity> page = this.page(
-                new Query<Activity>().getPage(params),
+        // 批量删除
+        this.baseMapper.deleteBatchIds(activityIds);
+    }
+
+    /**
+     * 更改活动状态
+     * @param statusVO 状态信息
+     */
+    @Override
+    public void changeStatus(StatusVO statusVO) {
+        Activity activity = Activity.builder()
+                .id(statusVO.getId())
+                .status(statusVO.getMultiStatus())
+                .build();
+
+        // 获取审批者ID
+        Integer userId = SecurityUtils.getUserId();
+        activity.setApproverId(userId);
+        this.baseMapper.updateById(activity);
+    }
+
+    /**
+     * 分页查询活动（小程序）
+     * @param activityPage 查询条件
+     * @return 活动列表
+     */
+    @Override
+    public PageResult getActivities(ActivityPage activityPage) {
+        LambdaQueryWrapper<Activity> queryWrapper = getQueryWrapper(activityPage);
+        IPage<Activity> page = this.baseMapper.selectPage(
+                PageUtils.initPage(activityPage),
                 queryWrapper
+                        .like(StringUtils.isNotBlank(activityPage.getTheme()), Activity::getTheme, activityPage.getTheme())
+                        .select(Activity::getId, Activity::getTheme, Activity::getAddress, Activity::getPicture,
+                                Activity::getActivityStartTime, Activity::getActivityEndTime,
+                                Activity::getApplyStartTime, Activity::getApplyEndTime)
         );
-        //IPage<Activity> page = null;
+        return new PageResult(page);
+    }
 
-        PageResult pageResult = new PageResult(page);
-        List<SimpleActivityVo> simpleActivityVoList = page.getRecords().stream().map(activity -> {
-            SimpleActivityVo simpleActivityVo = new SimpleActivityVo();
-            BeanUtils.copyProperties(activity, simpleActivityVo);
-            return simpleActivityVo;
-        }).collect(Collectors.toList());
+    /**
+     * 分页获取活动信息列表（用户报名的活动）
+     * @param activityPage 分页搜索条件
+     * @return 活动信息列表
+     */
+    @Override
+    public PageResult getMyActivityList(ActivityPage activityPage) {
+        // 当前用户报名的活动id列表
+        List<Integer> activityIds = registerActivityService.getActivityIds();
+        LambdaQueryWrapper<Activity> queryWrapper = getQueryWrapper(activityPage);
+        IPage<Activity> page = this.baseMapper.selectPage(
+                PageUtils.initPage(activityPage),
+                queryWrapper
+                        .like(StringUtils.isNotBlank(activityPage.getTheme()), Activity::getTheme, activityPage.getTheme())
+                        .in(Activity::getId, activityIds)
+                        .select(Activity::getId, Activity::getTheme, Activity::getAddress, Activity::getPicture,
+                                Activity::getActivityStartTime, Activity::getActivityEndTime,
+                                Activity::getApplyStartTime, Activity::getApplyEndTime)
+        );
+        return new PageResult(page);
+    }
 
-        pageResult.setList(simpleActivityVoList);
-        return pageResult;
+    /**
+     * 根据查询条件获取公共 LambdaQueryWrapper
+     * @param activityPage 查询条件
+     * @return LambdaQueryWrapper
+     */
+    private LambdaQueryWrapper<Activity> getQueryWrapper(ActivityPage activityPage) {
+        // 只查询已审批活动
+        LambdaQueryWrapper<Activity> queryWrapper = new LambdaQueryWrapper<Activity>()
+                .eq(Activity::getStatus, EntityConstant.ACTIVITY_APPROVE);
+
+        // 活动进度
+        if (Objects.nonNull(activityPage.getProgress())) {
+            Integer progress = activityPage.getProgress();
+            switch (progress) {
+                case EntityConstant.ACTIVITY_NOT_STARTED:
+                    // 未开始
+                    queryWrapper.gt(Activity::getActivityStartTime, CommonUtils.getNowTime());
+                    break;
+                case EntityConstant.ACTIVITY_IN_PROGRESS:
+                    // 进行中
+                    queryWrapper.le(Activity::getActivityStartTime, CommonUtils.getNowTime())
+                            .ge(Activity::getActivityEndTime, CommonUtils.getNowTime());
+                    break;
+                case EntityConstant.ACTIVITY_HAVE_ENDED:
+                    // 已结束
+                    queryWrapper.lt(Activity::getActivityEndTime, CommonUtils.getNowTime());
+                    break;
+            }
+        }
+
+        // 我创建的
+        if (Objects.nonNull(activityPage.getCreatedByMe()) && activityPage.getCreatedByMe()) {
+            queryWrapper.eq(Activity::getApplicantId, SecurityUtils.getUserId());
+        }
+
+        // 排序
+        queryWrapper.orderByDesc(Activity::getActivityStartTime);
+        return queryWrapper;
     }
 }

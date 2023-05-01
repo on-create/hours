@@ -46,3 +46,18 @@ logging:
   level:
     com.example.hours: debug
 
+aliyun:
+  oss:
+    # oss对外服务的访问域名
+    endpoint: oss-cn-beijing.aliyuncs.com
+    # 访问身份验证中用到用户标识
+    accessKeyId: LTAI5tBx9CWmiAkcLQpnVe4e
+    # 用户用于加密签名字符串和oss用来验证签名字符串的密钥
+    accessKeySecret: WilqyPnuOt0YCwQRBszGfYiIWkAFEA
+    # oss的存储空间
+    bucketName: zms-hour
+    # 上传文件大小(M)
+    maxSize: 10
+    # 上传文件夹路径前缀
+    dir:
+      prefix: activity/images/

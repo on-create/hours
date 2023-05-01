@@ -1,17 +1,13 @@
 package com.example.hours.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.example.hours.common.validator.group.AddGroup;
 import com.example.hours.common.validator.group.TemporaryGroup;
 import com.example.hours.common.validator.group.UpdateGroup;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
@@ -19,13 +15,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @TableName("activity")
-public class Activity implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Activity extends BaseEntity implements Serializable {
 
     /**
      * 活动 id
@@ -135,18 +130,10 @@ public class Activity implements Serializable {
     private LocalDateTime activityEndTime;
 
     /**
-     * 创建时间
+     * 删除标记（0未删除 1已删除）
+     * @mock 0
      */
+    @TableLogic(value = "0", delval = "1")
     @JSONField(serialize = false)
-    @TableField(fill = FieldFill.INSERT)
-    @Null(message = "不能指定创建时间", groups = {AddGroup.class, TemporaryGroup.class, UpdateGroup.class})
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    @JSONField(serialize = false)
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    @Null(message = "不能指定更新时间", groups = {AddGroup.class, TemporaryGroup.class, UpdateGroup.class})
-    private LocalDateTime updateTime;
+    private Integer delFlag;
 }

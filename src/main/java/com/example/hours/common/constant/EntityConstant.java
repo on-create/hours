@@ -29,7 +29,7 @@ public class EntityConstant {
     /**
      * 草稿
      */
-    public static final int ACTIVITY_Draft = 0;
+    public static final int ACTIVITY_DRAFT = 0;
 
     /**
      * 待审批
@@ -44,7 +44,7 @@ public class EntityConstant {
     /**
      * 无人数限制
      */
-    public static final int ACTIVITY_NO_MAXIMUM = 0;
+    public static final int ACTIVITY_NUMBER_UNLIMITED = 0;
 
     /**
      * 活动报名人数
@@ -56,26 +56,24 @@ public class EntityConstant {
      */
     public static final int ACTIVITY_DRAFT_MAX = 5;
 
+    /**
+     * 未开始
+     */
+    public static final int ACTIVITY_NOT_STARTED = 0;
+
+    /**
+     * 进行中
+     */
+    public static final int ACTIVITY_IN_PROGRESS = 1;
+
+    /**
+     * 已结束
+     */
+    public static final int ACTIVITY_HAVE_ENDED = 2;
+
     //- - - - - - - - - - - - - - - - - - - - -  RegisterActivity 常量 - - - - - - - - - - - - - - - - - - - -
 
     public static final String REGISTER_ACTIVITY_ID = "registerId: ";
-
-    //- - - - - - - - - - - - - - - - - - - - -  Resource 常量 - - - - - - - - - - - - - - - - - - - -
-
-    /**
-     * 不允许匿名访问
-     */
-    public static final int RESOURCE_NOT_ANONYMOUS = 0;
-
-    /**
-     * 允许匿名访问
-     */
-    public static final int RESOURCE_ANONYMOUS = 1;
-
-    /**
-     * 模块id
-     */
-    public static final int RESOURCE_MODULE_ID = 0;
 
     //- - - - - - - - - - - - - - - - - - - - -  User 常量 - - - - - - - - - - - - - - - - - - - -
 
@@ -105,4 +103,14 @@ public class EntityConstant {
      * 普通用户ID
      */
     public static final Integer ROLE_COMMON_ID = 2;
+
+    /**
+     * 审批者ID
+     */
+    public static final Integer ROLE_APPROVER_ID = 3;
+
+    /**
+     * 申请者
+     */
+    public static final Integer ROLE_APPLICANT_ID = 4;
 }
